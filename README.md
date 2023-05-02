@@ -42,3 +42,4 @@ The library is separated in 2 main components by simple criteria:
 - `nd.lib`: modules which uses some external state (like IO) or creates it. Allowed to call `nd.lib.core` modules
 
 The main goal here is to maximize `nd.lib.core` and minimize `nd.lib`.
+
