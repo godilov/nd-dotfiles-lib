@@ -13,12 +13,24 @@ local as_str        = serialize_lib.as_str
 
 local clock         = os.clock
 
+local format        = string.format
+
+local concat        = table.concat
+
 local ipairs        = ipairs
 
 
-local get_bench_stat = nil
-local get_test_stat  = nil
-local get_stats      = nil
+local get_bench_stat         = nil
+local get_test_stat          = nil
+local get_stats_closure      = nil
+
+local get_id                 = nil
+local get_full_name          = nil
+local get_stats              = nil
+local get_bench_report       = nil
+local get_test_report        = nil
+local get_failed_bench_stats = nil
+local get_failed_test_stats  = nil
 
 
 get_bench_stat = function(case, index, options)
@@ -66,7 +78,7 @@ get_test_stat = function(case, index, options)
     }
 end
 
-get_stats = function(fn)
+get_stats_closure = function(fn)
     return function(cases, options)
         local stats = {}
 
@@ -78,9 +90,126 @@ get_stats = function(fn)
     end
 end
 
+get_id = function(stat)
+    return format('%s %s', stat.name, stat.args)
+end
+
+get_full_name = function(stat)
+    return format('%s: %s', stat.id, stat.name)
+end
+
+get_stats = function(cases, fn, options)
+    local arr = {}
+    local index = 0
+
+    for _, v in ipairs(cases) do
+        local stats = fn(v, options)
+
+        for _, stat in ipairs(stats) do
+            index = index + 1
+
+            arr[index] = stat
+        end
+    end
+
+    return arr
+end
+
+get_bench_report = function(stats, stats_prev)
+    local time_prev_arr = {}
+
+    for _, v in ipairs(stats_prev or {}) do
+        time_prev_arr[get_id(v)] = v.time
+    end
+
+    local arr = {}
+    local index = 0
+
+    for _, v in ipairs(stats) do
+        local time_prev = time_prev_arr[get_id(v)] or 0
+        local time_curr = v.time
+
+        index = index + 1
+
+        arr[index] = format('Bench %s.\nArgs: %s\nPrev: %.3e\nCurr: %.3e',
+            get_full_name(v),
+            v.args,
+            time_prev,
+            time_curr)
+    end
+
+    return concat(arr, '\n')
+end
+
+get_test_report = function(stats)
+    local arr = {}
+    local index = 0
+
+    for _, v in ipairs(stats) do
+        index = index + 1
+
+        arr[index] = format('Test %s %s.\nArg: %s\nRes: %s\nRet: %s',
+            get_full_name(v),
+            v.ok and 'succeed' or 'failed',
+            v.args,
+            v.res,
+            v.ret)
+    end
+
+    return concat(arr, '\n')
+end
+
+get_failed_bench_stats = function(stats, stats_prev, eps)
+    if not stats_prev then
+        return {}
+    end
+
+    local time_prev_arr = {}
+
+    for _, v in ipairs(stats_prev) do
+        time_prev_arr[get_id(v)] = v.time
+    end
+
+    local arr = {}
+    local index = 0
+
+    for _, v in ipairs(stats) do
+        local time_prev = time_prev_arr[get_id(v)] or 0
+        local time_curr = v.time
+
+        if time_curr - time_prev > eps then
+            index = index + 1
+
+            arr[index] = get_full_name(v)
+        end
+    end
+
+    return arr
+end
+
+get_failed_test_stats = function(stats)
+    local arr = {}
+    local index = 0
+
+    for _, v in ipairs(stats) do
+        if not v.ok then
+            index = index + 1
+
+            arr[index] = get_full_name(v)
+        end
+    end
+
+    return arr
+end
+
 return {
-    get_bench_stat  = get_bench_stat,
-    get_test_stat   = get_test_stat,
-    get_bench_stats = get_stats(get_bench_stat),
-    get_test_stats  = get_stats(get_test_stat),
+    get_bench_stat         = get_bench_stat,
+    get_test_stat          = get_test_stat,
+    get_bench_stats        = get_stats_closure(get_bench_stat),
+    get_test_stats         = get_stats_closure(get_test_stat),
+    get_stats              = get_stats,
+    get_bench_report       = get_bench_report,
+    get_test_report        = get_test_report,
+    get_failed_bench_stats = get_failed_bench_stats,
+    get_failed_test_stats  = get_failed_test_stats,
 }

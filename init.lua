@@ -3,7 +3,7 @@ local gsub    = string.gsub
 
 local path    = gsub(... or '', '%S+', {
     ['%.init'] = '',
-    ['%.']     = '/'
+    ['%.']     = '/',
 })
 
 local is_init = false
@@ -37,7 +37,12 @@ end
 run = function()
     init('.', true)
 
-    require 'test.init'.run()
+    require 'nd.lib.test' {
+        require 'test.fn',
+        require 'test.str',
+        require 'test.tab',
+        require 'test.color',
+    }
 end
 
 return {
