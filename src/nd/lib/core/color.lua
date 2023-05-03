@@ -105,9 +105,9 @@ local rgb_mt       = nil
 local hsl_mt       = nil
 local hsb_mt       = nil
 
-local rgb_raw      = nil
-local hsl_raw      = nil
-local hsb_raw      = nil
+local rgb_t        = nil
+local hsl_t        = nil
+local hsb_t        = nil
 
 local is_rgb       = nil
 local is_hsl       = nil
@@ -253,7 +253,7 @@ rgb_as_hsl = function(color)
     local l = (max + min) / 2
     local s = len / (1 - abs(2 * l - 1))
 
-    return hsl_raw { h, s, l, a }
+    return hsl_t { h, s, l, a }
 end
 
 rgb_as_hsb = function(color)
@@ -273,13 +273,13 @@ rgb_as_hsb = function(color)
     local b = max
     local s = b and len / b or 0
 
-    return hsb_raw { h, s, b, a }
+    return hsb_t { h, s, b, a }
 end
 
 hsl_as_rgb = function(color)
     nd_assert(is_hsl(color), nd_err, 'hsl.as_rgb(): color must be of type hsl')
 
-    return rgb_raw {
+    return rgb_t {
         hsl_comp(color, 0),
         hsl_comp(color, 8),
         hsl_comp(color, 4),
@@ -290,7 +290,7 @@ end
 hsb_as_rgb = function(color)
     nd_assert(is_hsb(color), nd_err, 'hsb.as_rgb(): color must be of type hsb')
 
-    return rgb_raw {
+    return rgb_t {
         hsb_comp(color, 5),
         hsb_comp(color, 3),
         hsb_comp(color, 1),
@@ -336,7 +336,7 @@ rgb_from_hex = function(hex)
     local g = rshift(band(n, 0x0000FF00), 8)
     local b = rshift(band(n, 0x000000FF), 0)
 
-    return rgb_raw { r, g, b, a }
+    return rgb_t { r, g, b, a }
 end
 
 hsl_from_hex = function(hex)
@@ -357,7 +357,7 @@ rgb_from = function(val)
 
     nd_assert(is_val_tab or is_val_num, nd_err, 'rgb.from(): val must be of type table or number')
 
-    return rgb_raw { {
+    return rgb_t { {
         clamp(is_val_tab and val[1] or val, 0, 255),
         clamp(is_val_tab and val[2] or val, 0, 255),
         clamp(is_val_tab and val[3] or val, 0, 255),
@@ -371,7 +371,7 @@ hsl_from = function(val)
 
     nd_assert(is_val_tab or is_val_num, nd_err, 'hsl.from(): val must be of type table or number')
 
-    return hsl_raw { {
+    return hsl_t { {
         clamp(is_val_tab and val[1] or val, 0.0, 1.0),
         clamp(is_val_tab and val[2] or val, 0.0, 1.0),
         clamp(is_val_tab and val[3] or val, 0.0, 1.0),
@@ -385,7 +385,7 @@ hsb_from = function(val)
 
     nd_assert(is_val_tab or is_val_num, nd_err, 'hsb.from(): val must be of type table or number')
 
-    return hsb_raw { {
+    return hsb_t { {
         clamp(is_val_tab and val[1] or val, 0.0, 1.0),
         clamp(is_val_tab and val[2] or val, 0.0, 1.0),
         clamp(is_val_tab and val[3] or val, 0.0, 1.0),
@@ -429,20 +429,20 @@ hsb_mt = {
     __div = hsb_div,
 }
 
-rgb_raw = ffi.metatype('rgb_t', rgb_mt)
-hsl_raw = ffi.metatype('hsl_t', hsl_mt)
-hsb_raw = ffi.metatype('hsb_t', hsb_mt)
+rgb_t = ffi.metatype('rgb_t', rgb_mt)
+hsl_t = ffi.metatype('hsl_t', hsl_mt)
+hsb_t = ffi.metatype('hsb_t', hsb_mt)
 
 is_rgb = function(val)
-    return ffi.istype(rgb_raw, val)
+    return ffi.istype(rgb_t, val)
 end
 
 is_hsl = function(val)
-    return ffi.istype(hsl_raw, val)
+    return ffi.istype(hsl_t, val)
 end
 
 is_hsb = function(val)
-    return ffi.istype(hsb_raw, val)
+    return ffi.istype(hsb_t, val)
 end
 
 is_color = function(val)
@@ -461,7 +461,7 @@ return {
         as_hex   = rgb_as_hex,
         from_hex = rgb_from_hex,
         from     = rgb_from,
-        raw      = rgb_raw,
+        type     = rgb_t,
     },
     hsl = {
         add      = hsl_add,
@@ -473,7 +473,7 @@ return {
         as_hex   = hsl_as_hex,
         from_hex = hsl_from_hex,
         from     = hsl_from,
-        raw      = hsl_raw,
+        type     = hsl_t,
     },
     hsb = {
         add      = hsb_add,
@@ -485,7 +485,7 @@ return {
         as_hex   = hsb_as_hex,
         from_hex = hsb_from_hex,
         from     = hsb_from,
-        raw      = hsb_raw,
+        type     = hsb_t,
     },
     is_rgb = is_rgb,
     is_hsl = is_hsl,

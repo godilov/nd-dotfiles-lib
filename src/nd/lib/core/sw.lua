@@ -1,7 +1,4 @@
-local type_lib   = require 'nd.lib.core.type'
 local assert_lib = require 'nd.lib.core.assert'
-
-local is_val     = type_lib.is_val
 
 local nd_assert  = assert_lib.get_fn(ND_LIB_IS_DEBUG)
 local nd_err     = assert_lib.get_err_fn 'nd.lib.core.sw'
@@ -33,7 +30,7 @@ ffi.cdef [[
     } sw_t;
 ]]
 
-local sw_raw = nil
+local sw_t   = nil
 local is_sw  = nil
 
 local start  = nil
@@ -42,14 +39,14 @@ local as_num = nil
 local as_str = nil
 
 
-sw_raw = ffi.metatype('sw_t', {})
+sw_t = ffi.metatype('sw_t', {})
 
 is_sw = function(val)
-    return ffi.istype(sw_raw, val)
+    return ffi.istype(sw_t, val)
 end
 
 start = function(sw)
-    return sw_raw {
+    return sw_t {
         clock(),
         sw and sw.exec or 0,
     }
@@ -60,7 +57,7 @@ stop = function(sw)
 
     local dt = clock() - sw.start
 
-    return sw_raw {
+    return sw_t {
         clock(),
         sw.exec + dt,
     }
