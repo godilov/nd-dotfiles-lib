@@ -14,18 +14,13 @@ local nd_err    = assert_lib.get_err_fn 'nd.lib.cache'
 local format    = string.format
 local match     = string.match
 
+local dir       = './cache/'
 local set_dir   = nil
-local dir       = './'
+local get_path  = nil
 
+local set       = nil
+local get       = nil
 
-local get_path = nil
-local set      = nil
-local get      = nil
-
-
-get_path = function(name)
-    return format('%s%s', dir, name)
-end
 
 set_dir = function(path)
     nd_assert(is_str(path), nd_err, 'set_dir(): path must be of type string')
@@ -35,6 +30,10 @@ set_dir = function(path)
     if not match(dir, '[^/]$') then
         dir = format('%s%s', dir, '/')
     end
+end
+
+get_path = function(name)
+    return format('%s%s', dir, name)
 end
 
 set = function(name, val)
