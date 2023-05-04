@@ -10,6 +10,8 @@ local nd_assert  = assert_lib.get_fn(ND_LIB_IS_DEBUG)
 local nd_err     = assert_lib.get_err_fn 'nd.lib.core.serialize'
 
 local format     = string.format
+local match      = string.match
+local gsub       = string.gsub
 
 local concat     = table.concat
 
@@ -26,21 +28,21 @@ as_str = function(val, options)
     if is_bool(val) or is_num(val) then
         return tostring(val)
     elseif is_str(val) then
-        return format('\'%s\'', val)
+        return format('\'%s\'', gsub(val, '\n', ' <-- New Line --> '))
     end
 
     if not is_tab(val) then
         return nil
     end
 
-    local opts        = options or {}
+    local opts_       = options or {}
 
-    local sep         = opts.sep or '\n'
-    local step        = opts.step or '    '
-    local offset      = opts.offset or ''
+    local sep         = opts_.sep or '\n'
+    local step        = opts_.step or '    '
+    local offset      = opts_.offset or ''
     local offset_next = format('%s%s', offset, step)
 
-    local opts_next   = {
+    local opts        = {
         sep    = sep,
         step   = step,
         offset = offset_next,
@@ -50,7 +52,7 @@ as_str = function(val, options)
     local index       = 0
 
     for _, v in ipairs(val) do
-        local str = as_str(v, opts_next)
+        local str = as_str(v, opts)
 
         index = index + 1
 
@@ -59,7 +61,7 @@ as_str = function(val, options)
 
     for k, v in pairs(val) do
         if not arr[k] then
-            local str = as_str(v, opts_next)
+            local str = as_str(v, opts)
 
             if str then
                 index = index + 1
@@ -79,7 +81,7 @@ as_val = function(str)
         return nil
     end
 
-    return nd_assert(loadstring(format('return %s', str)), nd_err,
+    return nd_assert(loadstring(match(str, '^[\n\t%s]*return') and str or format('return %s', str)), nd_err,
         'as_val(): loadstring returned nil')()
 end
 

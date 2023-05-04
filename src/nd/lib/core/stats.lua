@@ -33,7 +33,7 @@ local get_failed_bench_stats = nil
 local get_failed_test_stats  = nil
 
 
-get_bench_stat = function(case, index, options)
+get_bench_stat = function(case, index)
     nd_assert(is_str(case.name), nd_err, 'get_bench_stat(): case.name must be of type string')
     nd_assert(is_fn(case.fn), nd_err, 'get_bench_stat(): case.fn must be of type function')
     nd_assert(is_num(case.n), nd_err, 'get_bench_stat(): case.n must be of type number')
@@ -57,12 +57,13 @@ get_bench_stat = function(case, index, options)
     return {
         id   = case.id or index,
         name = case.name,
-        args = as_str(case.args, options),
+        args = case.args,
+        opts = case.opts,
         time = dt / case.n,
     }
 end
 
-get_test_stat = function(case, index, options)
+get_test_stat = function(case, index)
     nd_assert(is_str(case.name), nd_err, 'get_test_stat(): case.name must be of type string')
     nd_assert(is_fn(case.fn), nd_err, 'get_test_stat(): case.fn must be of type function')
 
@@ -71,9 +72,10 @@ get_test_stat = function(case, index, options)
     return {
         id   = case.id or index,
         name = case.name,
-        args = as_str(case.args, options),
-        res  = as_str(case.res, options),
-        ret  = as_str(ret, options),
+        args = case.args,
+        opts = case.opts,
+        res  = case.res,
+        ret  = ret,
         ok   = case.is_ok and case.is_ok(ret, case.res) or ret == case.res,
     }
 end
@@ -115,7 +117,7 @@ get_stats = function(cases, fn, options)
     return arr
 end
 
-get_bench_report = function(stats, stats_prev)
+get_bench_report = function(stats, stats_prev, options)
     local time_prev_arr = {}
 
     for _, v in ipairs(stats_prev or {}) do
@@ -133,7 +135,7 @@ get_bench_report = function(stats, stats_prev)
 
         arr[index] = format('Bench %s.\nArgs: %s\nPrev: %.3e\nCurr: %.3e',
             get_full_name(v),
-            v.args,
+            as_str(v.args, v.opts or options),
             time_prev,
             time_curr)
     end
@@ -141,7 +143,7 @@ get_bench_report = function(stats, stats_prev)
     return concat(arr, '\n')
 end
 
-get_test_report = function(stats)
+get_test_report = function(stats, options)
     local arr = {}
     local index = 0
 
@@ -151,9 +153,9 @@ get_test_report = function(stats)
         arr[index] = format('Test %s %s.\nArg: %s\nRes: %s\nRet: %s',
             get_full_name(v),
             v.ok and 'succeed' or 'failed',
-            v.args,
-            v.res,
-            v.ret)
+            as_str(v.args, v.opts or options),
+            as_str(v.res, v.opts or options),
+            as_str(v.ret, v.opts or options))
     end
 
     return concat(arr, '\n')

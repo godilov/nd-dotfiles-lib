@@ -1,10 +1,7 @@
 local format  = string.format
 local gsub    = string.gsub
 
-local path    = gsub(... or '', '%S+', {
-    ['%.init'] = '',
-    ['%.']     = '/',
-})
+local path    = gsub(gsub(... or '', '%.init', ''), '%.', '/')
 
 local is_init = false
 

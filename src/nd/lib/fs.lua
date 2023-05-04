@@ -125,7 +125,7 @@ end
 write_val = function(path, val)
     nd_assert(is_str(path), nd_err, 'write_val(): path must be of type string')
 
-    write_file(path, as_str(val) or 'nil')
+    write_file(path, format('return %s', as_str(val) or 'nil'))
 end
 
 return {

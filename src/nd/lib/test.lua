@@ -54,28 +54,30 @@ get_cases_arr = function(arr, fn)
     return t
 end
 
-return function(arr, config)
-    local cfg = config or {}
+return function(arr, config, options)
+    local cfg    = config or {}
 
-    local ext = cfg.ext or 'lua'
-    local dir = cfg.dir or 'test/stats'
-    local fmt = cfg.fmt or '%Y-%m-%d_%H-%M-%S'
-    local eps = cfg.eps or 1e-3
-    local save = cfg.save
+    local ext    = cfg.ext or 'lua'
+    local dir    = cfg.dir or 'test/stats'
+    local fmt    = cfg.fmt or '%Y-%m-%d_%H-%M-%S'
+    local eps    = cfg.eps or 1e-3
+    local save   = cfg.save or true
 
-    local options = {
-        sep    = ' ',
-        step   = '',
-        offset = '',
+    local opts_  = options or {}
+
+    local sep    = opts_.sep or ' '
+    local step   = opts_.step or ''
+    local offset = opts_.offset or ''
+
+    local opts   = {
+        sep    = sep,
+        step   = step,
+        offset = offset,
     }
 
-    local bs = get_stats(get_cases_arr(arr, get_bench_cases), get_bench_stats, options)
 
-    local ts = get_stats(get_cases_arr(arr, get_test_cases), get_test_stats, options)
-
-    if not exists(dir) then
-        create(dir)
-    end
+    local bs = get_stats(get_cases_arr(arr, get_bench_cases), get_bench_stats)
+    local ts = get_stats(get_cases_arr(arr, get_test_cases), get_test_stats)
 
     local bs_arr = enum(dir, 'bench-')
     local bs_any = #bs_arr ~= 0
@@ -84,9 +86,9 @@ return function(arr, config)
     local bs_prev = bs_any and read_val(format('%s/%s', dir, bs_last))
 
     print()
-    print(get_bench_report(bs, bs_prev))
+    print(get_bench_report(bs, bs_prev, opts))
     print()
-    print(get_test_report(ts))
+    print(get_test_report(ts, opts))
     print()
 
     local bs_failed = get_failed_bench_stats(bs, bs_prev, eps)
