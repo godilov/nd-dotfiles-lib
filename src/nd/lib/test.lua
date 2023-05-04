@@ -2,8 +2,6 @@ local fs_lib          = require 'nd.lib.fs'
 local stats_lib       = require 'nd.lib.core.stats'
 local assert_lib      = require 'nd.lib.core.assert'
 
-local exists          = fs_lib.exists
-local create          = fs_lib.create
 local enum            = fs_lib.enum
 local read_val        = fs_lib.read_val
 local write_val       = fs_lib.write_val
@@ -61,7 +59,7 @@ return function(arr, config, options)
     local dir    = cfg.dir or 'test/stats'
     local fmt    = cfg.fmt or '%Y-%m-%d_%H-%M-%S'
     local eps    = cfg.eps or 1e-3
-    local save   = cfg.save or true
+    local save   = cfg.save
 
     local opts_  = options or {}
 
