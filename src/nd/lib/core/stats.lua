@@ -134,11 +134,11 @@ get_bench_report = function(stats, stats_prev, options)
 
         index = index + 1
 
-        arr[index] = format('Bench %s.\nArgs: %s\nPrev: %.3e\nCurr: %.3e',
+        arr[index] = format('Bench %s.\nArgs: %s\nPrev: %.6fms\nCurr: %.6fms',
             get_full_name(v),
             as_str(v.args, v.opts or options),
-            time_prev,
-            time_curr)
+            1000 * time_prev,
+            1000 * time_curr)
     end
 
     return concat(arr, '\n')

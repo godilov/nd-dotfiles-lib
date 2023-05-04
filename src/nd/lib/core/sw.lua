@@ -25,8 +25,8 @@ ffi.cdef [[
     typedef double f64;
 
     typedef struct sw {
-        u64 start;
-        u64 exec;
+        f64 start;
+        f64 exec;
     } sw_t;
 ]]
 
@@ -74,10 +74,10 @@ as_str = function(sw, options)
 
     local opts = options or {}
 
-    local fmt = opts.fmt or 'Time: %sms'
+    local fmt = opts.fmt or 'Time: %.6fms'
     local mul = opts.mul or 1000
 
-    return format(fmt or 'Time: %sms', mul * sw.exec)
+    return format(fmt, mul * sw.exec)
 end
 
 return {
@@ -86,4 +86,5 @@ return {
     stop   = stop,
     as_num = as_num,
     as_str = as_str,
+    type   = sw_t,
 }

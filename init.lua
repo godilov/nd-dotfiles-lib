@@ -36,6 +36,7 @@ run = function()
 
     require 'nd.lib.test' {
         require 'test.fn',
+        require 'test.sw',
         require 'test.str',
         require 'test.tab',
         require 'test.color',
