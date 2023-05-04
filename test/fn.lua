@@ -1,32 +1,29 @@
-local fn_lib   = require 'nd.lib.core.fn'
-local type_lib = require 'nd.lib.core.type'
+local fn_lib  = require 'nd.lib.core.fn'
 
-local empty    = fn_lib.empty
-local range    = fn_lib.range
-local it       = fn_lib.it
-local iv       = fn_lib.iv
-local kv       = fn_lib.kv
-local keys     = fn_lib.keys
-local ivals    = fn_lib.ivals
-local kvals    = fn_lib.kvals
-local map      = fn_lib.map
-local filter   = fn_lib.filter
-local reduce   = fn_lib.reduce
-local concat   = fn_lib.concat
-local zip      = fn_lib.zip
-local take     = fn_lib.take
-local skip     = fn_lib.skip
-local all      = fn_lib.all
-local any      = fn_lib.any
-local add      = fn_lib.add
-local remove   = fn_lib.remove
-local collect  = fn_lib.collect
+local empty   = fn_lib.empty
+local range   = fn_lib.range
+local it      = fn_lib.it
+local iv      = fn_lib.iv
+local kv      = fn_lib.kv
+local keys    = fn_lib.keys
+local ivals   = fn_lib.ivals
+local kvals   = fn_lib.kvals
+local map     = fn_lib.map
+local filter  = fn_lib.filter
+local reduce  = fn_lib.reduce
+local concat  = fn_lib.concat
+local zip     = fn_lib.zip
+local take    = fn_lib.take
+local skip    = fn_lib.skip
+local all     = fn_lib.all
+local any     = fn_lib.any
+local add     = fn_lib.add
+local remove  = fn_lib.remove
+local collect = fn_lib.collect
 
-local are_eq   = type_lib.are_eq
+local gmatch  = string.gmatch
 
-local gmatch   = string.gmatch
-
-local pairs    = pairs
+local pairs   = pairs
 
 
 local empty_fn  = function(_) return collect(empty()) end
@@ -121,7 +118,6 @@ get_test_cases = function()
             args = {},
             res = {},
             fn = empty_fn,
-            is_ok = are_eq,
         },
         {
             name = 'fn.range()',
@@ -134,14 +130,12 @@ get_test_cases = function()
                 { 5, 9 },
             },
             fn = range_fn,
-            is_ok = are_eq,
         },
         {
             name = 'fn.it()',
             args = { '1 2 3 4 5', '[^%s]+' },
             res = { '1', '2', '3', '4', '5' },
             fn = it_fn,
-            is_ok = are_eq,
         },
         {
             name = 'fn.iv()',
@@ -154,7 +148,6 @@ get_test_cases = function()
                 { 5, 1 },
             },
             fn = iv_fn,
-            is_ok = are_eq,
         },
         {
             name = 'fn.kv()',
@@ -186,7 +179,6 @@ get_test_cases = function()
             args = { a = 9, b = 8, c = 7, d = 6, e = 5, 5, 4, 3, 2, 1 },
             res = { 5, 4, 3, 2, 1 },
             fn = ivals_fn,
-            is_ok = are_eq,
         },
         {
             name = 'fn.kvals()',
@@ -203,7 +195,6 @@ get_test_cases = function()
             },
             res = { 25, 16, 9, 4, 1 },
             fn = map_fn,
-            is_ok = are_eq,
         },
         {
             name = 'fn.filter()',
@@ -213,7 +204,6 @@ get_test_cases = function()
             },
             res = { 2, 1 },
             fn = filter_fn,
-            is_ok = are_eq,
         },
         {
             name = 'fn.reduce()',
@@ -224,7 +214,6 @@ get_test_cases = function()
             },
             res = 21,
             fn = reduce_fn,
-            is_ok = are_eq,
         },
         {
             name = 'fn.concat()',
@@ -234,7 +223,6 @@ get_test_cases = function()
             },
             res = { 5, 4, 3, 2, 1, 9, 8, 7, 6, 5 },
             fn = concat_fn,
-            is_ok = are_eq,
         },
         {
             name = 'fn.zip()',
@@ -250,7 +238,6 @@ get_test_cases = function()
                 { 1, 5 },
             },
             fn = zip_fn,
-            is_ok = are_eq,
         },
         {
             name = 'fn.take()',
@@ -260,7 +247,6 @@ get_test_cases = function()
             },
             res = { 5, 4, 3 },
             fn = take_fn,
-            is_ok = are_eq,
         },
         {
             name = 'fn.skip()',
@@ -270,7 +256,6 @@ get_test_cases = function()
             },
             res = { 2, 1 },
             fn = skip_fn,
-            is_ok = are_eq,
         },
         {
             name = 'fn.all()',
@@ -280,7 +265,6 @@ get_test_cases = function()
             },
             res = true,
             fn = all_fn,
-            is_ok = are_eq,
         },
         {
             name = 'fn.any()',
@@ -290,7 +274,6 @@ get_test_cases = function()
             },
             res = true,
             fn = any_fn,
-            is_ok = are_eq,
         },
         {
             name = 'fn.add()',
@@ -301,7 +284,6 @@ get_test_cases = function()
             },
             res = { 5, 4, 6, 3, 2, 1 },
             fn = add_fn,
-            is_ok = are_eq,
         },
         {
             name = 'fn.remove()',
@@ -311,7 +293,6 @@ get_test_cases = function()
             },
             res = { 5, 4, 2, 1 },
             fn = remove_fn,
-            is_ok = are_eq,
         },
     }
 end

@@ -1,6 +1,4 @@
-local color_lib = require 'nd.lib.core.color'
-local type_lib  = require 'nd.lib.core.type'
-
+local color_lib    = require 'nd.lib.core.color'
 
 local rgb          = color_lib.rgb
 local hsl          = color_lib.hsl
@@ -30,8 +28,6 @@ local hsb_add      = hsb.add
 local hsb_sub      = hsb.sub
 local hsb_mul      = hsb.mul
 local hsb_div      = hsb.div
-
-local are_eq       = type_lib.are_eq
 
 
 local is_rgb_fn = function(args) return is_rgb(rgb_from(args[1])) end
@@ -96,21 +92,18 @@ get_test_cases = function()
             args = { 0 },
             res = true,
             fn = is_rgb_fn,
-            is_ok = are_eq,
         },
         {
             name = 'color.is_hsl()',
             args = { 0.0 },
             res = true,
             fn = is_hsl_fn,
-            is_ok = are_eq,
         },
         {
             name = 'color.is_hsb()',
             args = { 0.0 },
             res = true,
             fn = is_hsb_fn,
-            is_ok = are_eq,
         },
         {
             name = 'rgb.from()',

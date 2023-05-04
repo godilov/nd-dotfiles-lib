@@ -5,6 +5,7 @@ local serialize_lib = require 'nd.lib.core.serialize'
 local is_num        = type_lib.is_num
 local is_str        = type_lib.is_str
 local is_fn         = type_lib.is_fn
+local are_eq        = type_lib.are_eq
 
 local nd_assert     = assert_lib.get_fn(ND_LIB_IS_DEBUG)
 local nd_err        = assert_lib.get_err_fn 'nd.lib.core.stats'
@@ -76,7 +77,7 @@ get_test_stat = function(case, index)
         opts = case.opts,
         res  = case.res,
         ret  = ret,
-        ok   = case.is_ok and case.is_ok(ret, case.res) or ret == case.res,
+        ok   = case.is_ok and case.is_ok(ret, case.res) or are_eq(ret, case.res),
     }
 end
 

@@ -1,9 +1,6 @@
-local str_lib  = require 'nd.lib.core.str'
-local type_lib = require 'nd.lib.core.type'
+local str_lib = require 'nd.lib.core.str'
 
-local split    = str_lib.split
-
-local are_eq   = type_lib.are_eq
+local split   = str_lib.split
 
 
 local split_fn = function(args) return split(args[1], args[2]) end
@@ -19,7 +16,7 @@ get_bench_cases = function()
             name = 'str.split()',
             args = {
                 '1 3 3 7 H e l l o , W o r l d 1 3 3 7',
-                ' '
+                ' ',
             },
             fn = split_fn,
             n = 1000,
@@ -43,7 +40,6 @@ get_test_cases = function()
                 '1', '3', '3', '7',
             },
             fn = split_fn,
-            is_ok = are_eq,
         },
     }
 end
