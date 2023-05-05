@@ -206,7 +206,7 @@ ivals = function(t)
         if v then
             return v
         end
-    end, t, nil)
+    end, t, 0)
 end
 
 kvals = function(t)
@@ -222,7 +222,7 @@ kvals = function(t)
         if v then
             return v
         end
-    end, t, nil)
+    end, t, 0)
 end
 
 get_map_iter = function(fn, iter)
@@ -281,13 +281,13 @@ get_concat_iter = function(iter_, iter)
     local elem_ = iter_[3]
 
     return get_iter(function(_, _)
-        elem = next(data, elem)
+        elem = elem and next(data, elem)
 
         if elem then
             return elem
         end
 
-        elem_ = next_(data_, elem_)
+        elem_ = elem_ and next_(data_, elem_)
 
         if elem_ then
             return elem_
