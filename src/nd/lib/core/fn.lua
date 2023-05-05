@@ -230,9 +230,11 @@ get_map_iter = function(fn, iter)
     nd_assert(is_iter(iter), nd_err, 'get_map_iter(): iter must be of type iter')
 
     local next = iter[1]
+    local data = iter[2]
+    local elem = iter[3]
 
-    return get_iter(function(data, state)
-        local elem = next(data, state)
+    return get_iter(function(_, _)
+        elem = next(data, elem)
 
         return elem and fn(elem)
     end, iter[2], iter[3])
@@ -398,12 +400,27 @@ get_add_iter = function(val, index, iter)
     nd_assert(is_iter(iter), nd_err, 'get_add_iter(): iter must be of type iter')
 
     local next = iter[1]
+    local elem = nil
     local ind  = 0
 
     return get_iter(function(data, state)
         ind = ind + 1
 
-        return ind == index and val or next(data, state)
+        if ind == index then
+            elem = next(data, state)
+
+            return val
+        end
+
+        if elem then
+            local ret = elem
+
+            elem = nil
+
+            return ret
+        end
+
+        return next(data, state)
     end, iter[2], iter[3])
 end
 
@@ -418,7 +435,7 @@ get_remove_iter = function(index, iter)
         ind = ind + 1
 
         if ind == index then
-            next(data, state)
+            state = next(data, state)
         end
 
         return next(data, state)
@@ -514,7 +531,7 @@ end
 all = function(fn, iter)
     nd_assert(is_fn(fn), nd_err, 'all(): fn must be of type function')
 
-    return iter and get_all(fn, iter) or function(iter_ext)
+    return iter and get_all(fn, iter) or not iter and function(iter_ext)
         return get_all(fn, iter_ext)
     end
 end
@@ -522,7 +539,7 @@ end
 any = function(fn, iter)
     nd_assert(is_fn(fn), nd_err, 'any(): fn must be of type function')
 
-    return iter and get_any(fn, iter) or function(iter_ext)
+    return iter and get_any(fn, iter) or not iter and function(iter_ext)
         return get_any(fn, iter_ext)
     end
 end

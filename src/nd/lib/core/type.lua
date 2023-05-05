@@ -51,7 +51,7 @@ are_same_mt = function(x, y)
 end
 
 are_eq = function(x, y)
-    if x ~= y and (not x or not y) then
+    if x ~= y and (is_nil(x) or is_nil(y)) then
         return false
     end
 
