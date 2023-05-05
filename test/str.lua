@@ -19,7 +19,6 @@ get_bench_cases = function()
                 ' ',
             },
             fn = split_fn,
-            n = 1000,
         },
     }
 end

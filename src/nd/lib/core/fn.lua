@@ -13,7 +13,8 @@ local next_fn         = next
 local is_iter         = nil
 local get_iter        = nil
 local empty_next      = nil
-local range_next      = nil
+local range_v_next    = nil
+local range_iv_next   = nil
 local iv_next         = nil
 local kv_next         = nil
 local keys_next       = nil
@@ -33,29 +34,30 @@ local get_collect     = nil
 local get_each        = nil
 
 
-local empty   = nil
-local range   = nil
-local it      = nil
-local iv      = nil
-local kv      = nil
-local keys    = nil
-local ivals   = nil
-local kvals   = nil
-local map     = nil
-local filter  = nil
-local reduce  = nil
-local concat  = nil
-local zip     = nil
-local take    = nil
-local skip    = nil
-local count   = nil
-local all     = nil
-local any     = nil
-local add     = nil
-local remove  = nil
-local collect = nil
-local each    = nil
-local pipe    = nil
+local empty    = nil
+local range_v  = nil
+local range_iv = nil
+local it       = nil
+local iv       = nil
+local kv       = nil
+local keys     = nil
+local ivals    = nil
+local kvals    = nil
+local map      = nil
+local filter   = nil
+local reduce   = nil
+local concat   = nil
+local zip      = nil
+local take     = nil
+local skip     = nil
+local count    = nil
+local all      = nil
+local any      = nil
+local add      = nil
+local remove   = nil
+local collect  = nil
+local each     = nil
+local pipe     = nil
 
 
 local iter_mt = {
@@ -89,15 +91,27 @@ end
 empty_next = function()
 end
 
-range_next = function(data, state)
+range_v_next = function(data, state)
     local stop = data[1]
     local step = data[2]
     local sign = data[3]
 
-    local val = state[2] + step
+    local val = state + step
 
     if sign * val < sign * stop then
-        return { state[1] + 1, val }
+        return val
+    end
+end
+
+range_iv_next = function(data, state)
+    local len   = data[1]
+    local step  = data[2]
+
+    local index = state[1]
+    local val   = state[2] + step
+
+    if index < len then
+        return { index + 1, val }
     end
 end
 
@@ -126,20 +140,33 @@ empty = function()
     return get_iter(empty_next)
 end
 
-range = function(len, start, step)
+range_v = function(len, start, step)
     if not start then start = 1 end
     if not step then step = 1 end
 
-    nd_assert(is_num(len), nd_err, 'range(): len must be of type number')
-    nd_assert(is_num(start), nd_err, 'range(): start must be of type number')
-    nd_assert(is_num(step), nd_err, 'range(): step must be of type number')
-    nd_assert(step ~= 0, nd_err, 'range(): step must be non-zero')
-    nd_assert(len >= 0, nd_err, 'range(): len must be more than zero or equal')
+    nd_assert(is_num(len), nd_err, 'range_v(): len must be of type number')
+    nd_assert(is_num(start), nd_err, 'range_v(): start must be of type number')
+    nd_assert(is_num(step), nd_err, 'range_v(): step must be of type number')
+    nd_assert(step ~= 0, nd_err, 'range_v(): step must be non-zero')
+    nd_assert(len >= 0, nd_err, 'range_v(): len must be more than zero or equal')
 
     local sign = step > 0 and 1 or -1
-    local stop = start + sign * len
+    local stop = start + step * len
 
-    return get_iter(range_next, { stop, step, sign }, { 0, start - step })
+    return get_iter(range_v_next, { stop, step, sign }, start - step)
+end
+
+range_iv = function(len, start, step)
+    if not start then start = 1 end
+    if not step then step = 1 end
+
+    nd_assert(is_num(len), nd_err, 'range_iv(): len must be of type number')
+    nd_assert(is_num(start), nd_err, 'range_iv(): start must be of type number')
+    nd_assert(is_num(step), nd_err, 'range_iv(): step must be of type number')
+    nd_assert(step ~= 0, nd_err, 'range_iv(): step must be non-zero')
+    nd_assert(len >= 0, nd_err, 'range_iv(): len must be more than zero or equal')
+
+    return get_iter(range_iv_next, { len, step }, { 0, start - step })
 end
 
 it = function(fn)
@@ -314,7 +341,7 @@ get_skip_iter = function(n, iter)
     return get_iter(function(data, state)
         local elem = state
 
-        for _ in range(index)() do
+        for _ in range_v(index)() do
             elem = next(data, elem)
         end
 
@@ -536,27 +563,28 @@ pipe = function(iter, args)
 end
 
 return {
-    empty   = empty,
-    range   = range,
-    it      = it,
-    iv      = iv,
-    kv      = kv,
-    keys    = keys,
-    ivals   = ivals,
-    kvals   = kvals,
-    map     = map,
-    filter  = filter,
-    reduce  = reduce,
-    concat  = concat,
-    zip     = zip,
-    take    = take,
-    skip    = skip,
-    count   = count,
-    all     = all,
-    any     = any,
-    add     = add,
-    remove  = remove,
-    collect = collect,
-    each    = each,
-    pipe    = pipe,
+    empty    = empty,
+    range_v  = range_v,
+    range_iv = range_iv,
+    it       = it,
+    iv       = iv,
+    kv       = kv,
+    keys     = keys,
+    ivals    = ivals,
+    kvals    = kvals,
+    map      = map,
+    filter   = filter,
+    reduce   = reduce,
+    concat   = concat,
+    zip      = zip,
+    take     = take,
+    skip     = skip,
+    count    = count,
+    all      = all,
+    any      = any,
+    add      = add,
+    remove   = remove,
+    collect  = collect,
+    each     = each,
+    pipe     = pipe,
 }

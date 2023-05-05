@@ -9,7 +9,6 @@ local filter   = fn_lib.filter
 local reduce   = fn_lib.reduce
 local collect  = fn_lib.collect
 
-local is_val   = type_lib.is_val
 local is_tab   = type_lib.is_tab
 
 
@@ -62,7 +61,7 @@ merge_deep = function(args)
 
                 return t
             end, tx or {}, kv(arg))
-            or is_val(arg) and arg
+            or arg
     end, nil, ivals(args))
 end
 

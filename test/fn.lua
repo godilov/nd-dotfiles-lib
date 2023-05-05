@@ -1,50 +1,57 @@
-local fn_lib  = require 'nd.lib.core.fn'
+local fn_lib   = require 'nd.lib.core.fn'
 
-local empty   = fn_lib.empty
-local range   = fn_lib.range
-local it      = fn_lib.it
-local iv      = fn_lib.iv
-local kv      = fn_lib.kv
-local keys    = fn_lib.keys
-local ivals   = fn_lib.ivals
-local kvals   = fn_lib.kvals
-local map     = fn_lib.map
-local filter  = fn_lib.filter
-local reduce  = fn_lib.reduce
-local concat  = fn_lib.concat
-local zip     = fn_lib.zip
-local take    = fn_lib.take
-local skip    = fn_lib.skip
-local all     = fn_lib.all
-local any     = fn_lib.any
-local add     = fn_lib.add
-local remove  = fn_lib.remove
-local collect = fn_lib.collect
+local empty    = fn_lib.empty
+local range_v  = fn_lib.range_v
+local range_iv = fn_lib.range_iv
+local it       = fn_lib.it
+local iv       = fn_lib.iv
+local kv       = fn_lib.kv
+local keys     = fn_lib.keys
+local ivals    = fn_lib.ivals
+local kvals    = fn_lib.kvals
+local map      = fn_lib.map
+local filter   = fn_lib.filter
+local reduce   = fn_lib.reduce
+local concat   = fn_lib.concat
+local zip      = fn_lib.zip
+local take     = fn_lib.take
+local skip     = fn_lib.skip
+local count    = fn_lib.count
+local all      = fn_lib.all
+local any      = fn_lib.any
+local add      = fn_lib.add
+local remove   = fn_lib.remove
+local collect  = fn_lib.collect
 
-local gmatch  = string.gmatch
+local gmatch   = string.gmatch
 
-local pairs   = pairs
+local pairs    = pairs
 
 
-local empty_fn  = function(_) return collect(empty()) end
-local range_fn  = function(args) return collect(range(args[1], args[2], args[3])) end
-local it_fn     = function(args) return collect(it(gmatch(args[1], args[2]))) end
-local iv_fn     = function(args) return collect(iv(args)) end
-local kv_fn     = function(args) return collect(kv(args)) end
-local keys_fn   = function(args) return collect(keys(args)) end
-local ivals_fn  = function(args) return collect(ivals(args)) end
-local kvals_fn  = function(args) return collect(kvals(args)) end
-local map_fn    = function(args) return collect(map(args[2], ivals(args[1]))) end
-local filter_fn = function(args) return collect(filter(args[2], ivals(args[1]))) end
-local reduce_fn = function(args) return reduce(args[3], args[1], ivals(args[2])) end
-local concat_fn = function(args) return collect(concat(ivals(args[1]), ivals(args[2]))) end
-local zip_fn    = function(args) return collect(zip(ivals(args[1]), ivals(args[2]))) end
-local take_fn   = function(args) return collect(take(args[1], ivals(args[2]))) end
-local skip_fn   = function(args) return collect(skip(args[1], ivals(args[2]))) end
-local all_fn    = function(args) return all(args[2], ivals(args[1])) end
-local any_fn    = function(args) return any(args[2], ivals(args[1])) end
-local add_fn    = function(args) return collect(add(args[1], args[2], ivals(args[3]))) end
-local remove_fn = function(args) return collect(remove(args[1], ivals(args[2]))) end
+local empty_fn    = function(_) return collect(empty()) end
+local range_v_fn  = function(args) return collect(range_v(args[1], args[2], args[3])) end
+local range_iv_fn = function(args) return collect(range_iv(args[1], args[2], args[3])) end
+local it_fn       = function(args) return collect(it(gmatch(args[1], args[2]))) end
+local iv_fn       = function(args) return collect(iv(args)) end
+local kv_fn       = function(args) return collect(kv(args)) end
+local keys_fn     = function(args) return collect(keys(args)) end
+local ivals_fn    = function(args) return collect(ivals(args)) end
+local kvals_fn    = function(args) return collect(kvals(args)) end
+local map_fn      = function(args) return collect(map(args[2], ivals(args[1]))) end
+local filter_fn   = function(args) return collect(filter(args[2], ivals(args[1]))) end
+local reduce_fn   = function(args) return reduce(args[3], args[1], ivals(args[2])) end
+local concat_fn   = function(args) return collect(concat(ivals(args[1]), ivals(args[2]))) end
+local zip_fn      = function(args) return collect(zip(ivals(args[1]), ivals(args[2]))) end
+local take_fn     = function(args) return collect(take(args[1], ivals(args[2]))) end
+local skip_fn     = function(args) return collect(skip(args[1], ivals(args[2]))) end
+local count_fn    = function(args) return count(range_v(args[1])) end
+local all_fn      = function(args) return all(args[2], ivals(args[1])) end
+local any_fn      = function(args) return any(args[2], ivals(args[1])) end
+local add_fn      = function(args) return collect(add(args[1], args[2], ivals(args[3]))) end
+local remove_fn   = function(args) return collect(remove(args[1], ivals(args[2]))) end
+
+local arr1        = collect(range_v(1000, 0, 3))
+local arr2        = collect(range_v(1000, 0, 7))
 
 
 local kv_eq           = nil
@@ -100,13 +107,141 @@ get_bench_cases = function()
             name = 'fn.empty()',
             args = {},
             fn = empty_fn,
-            n = 1000,
         },
         {
-            name = 'fn.range()',
+            name = 'fn.range_v()',
             args = { 1000, 1, 2 },
-            fn = range_fn,
-            n = 1000,
+            fn = range_v_fn,
+        },
+        {
+            name = 'fn.range_iv()',
+            args = { 1000, 1, 2 },
+            fn = range_iv_fn,
+        },
+        {
+            name = 'fn.it()',
+            args = { '1 2 3 4 5', '[^%s]+' },
+            fn = it_fn,
+        },
+        {
+            name = 'fn.iv()',
+            args = { a = 9, b = 8, c = 7, d = 6, e = 5, 5, 4, 3, 2, 1 },
+            fn = iv_fn,
+        },
+        {
+            name = 'fn.kv()',
+            args = { a = 9, b = 8, c = 7, d = 6, e = 5, 5, 4, 3, 2, 1 },
+            fn = kv_fn,
+        },
+        {
+            name = 'fn.keys()',
+            args = { a = 9, b = 8, c = 7, d = 6, e = 5, 5, 4, 3, 2, 1 },
+            fn = keys_fn,
+        },
+        {
+            name = 'fn.ivals()',
+            args = { a = 9, b = 8, c = 7, d = 6, e = 5, 5, 4, 3, 2, 1 },
+            fn = ivals_fn,
+        },
+        {
+            name = 'fn.kvals()',
+            args = { a = 9, b = 8, c = 7, d = 6, e = 5, 5, 4, 3, 2, 1 },
+            fn = kvals_fn,
+        },
+        {
+            name = 'fn.map()',
+            args = {
+                arr1,
+                function(x) return x * x end,
+            },
+            fn = map_fn,
+        },
+        {
+            name = 'fn.filter()',
+            args = {
+                arr1,
+                function(x) return x < 3 end,
+            },
+            fn = filter_fn,
+        },
+        {
+            name = 'fn.reduce()',
+            args = {
+                0,
+                arr1,
+                function(val, x) return val + x end,
+            },
+            fn = reduce_fn,
+        },
+        {
+            name = 'fn.concat()',
+            args = {
+                arr2,
+                arr1,
+            },
+            fn = concat_fn,
+        },
+        {
+            name = 'fn.zip()',
+            args = {
+                arr2,
+                arr1,
+            },
+            fn = zip_fn,
+        },
+        {
+            name = 'fn.take()',
+            args = {
+                #arr1,
+                arr1,
+            },
+            fn = take_fn,
+        },
+        {
+            name = 'fn.skip()',
+            args = {
+                #arr1,
+                arr1,
+            },
+            fn = skip_fn,
+        },
+        {
+            name = 'fn.count()',
+            args = { 1000 },
+            fn = count_fn,
+        },
+        {
+            name = 'fn.all()',
+            args = {
+                arr1,
+                function(x) return x >= 0 end,
+            },
+            fn = all_fn,
+        },
+        {
+            name = 'fn.any()',
+            args = {
+                arr1,
+                function(x) return x < 0 end,
+            },
+            fn = any_fn,
+        },
+        {
+            name = 'fn.add()',
+            args = {
+                0,
+                #arr1 / 2,
+                arr1,
+            },
+            fn = add_fn,
+        },
+        {
+            name = 'fn.remove()',
+            args = {
+                #arr1 / 2,
+                arr1,
+            },
+            fn = remove_fn,
         },
     }
 end
@@ -120,8 +255,14 @@ get_test_cases = function()
             fn = empty_fn,
         },
         {
-            name = 'fn.range()',
-            args = { 10, 1, 2 },
+            name = 'fn.range_v()',
+            args = { 5, 1, 2 },
+            res = { 1, 3, 5, 7, 9 },
+            fn = range_v_fn,
+        },
+        {
+            name = 'fn.range_iv()',
+            args = { 5, 1, 2 },
             res = {
                 { 1, 1 },
                 { 2, 3 },
@@ -129,7 +270,7 @@ get_test_cases = function()
                 { 4, 7 },
                 { 5, 9 },
             },
-            fn = range_fn,
+            fn = range_iv_fn,
         },
         {
             name = 'fn.it()',
@@ -256,6 +397,12 @@ get_test_cases = function()
             },
             res = { 2, 1 },
             fn = skip_fn,
+        },
+        {
+            name = 'fn.count()',
+            args = { 1000 },
+            res = 1000,
+            fn = count_fn,
         },
         {
             name = 'fn.all()',

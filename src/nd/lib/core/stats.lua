@@ -2,7 +2,6 @@ local type_lib      = require 'nd.lib.core.type'
 local assert_lib    = require 'nd.lib.core.assert'
 local serialize_lib = require 'nd.lib.core.serialize'
 
-local is_num        = type_lib.is_num
 local is_str        = type_lib.is_str
 local is_fn         = type_lib.is_fn
 local are_eq        = type_lib.are_eq
@@ -37,11 +36,10 @@ local get_failed_test_stats  = nil
 get_bench_stat = function(case, index)
     nd_assert(is_str(case.name), nd_err, 'get_bench_stat(): case.name must be of type string')
     nd_assert(is_fn(case.fn), nd_err, 'get_bench_stat(): case.fn must be of type function')
-    nd_assert(is_num(case.n), nd_err, 'get_bench_stat(): case.n must be of type number')
 
     local dt = 0
     local fn = case.fn
-    local n  = case.n
+    local n  = case.n or 1000
 
     for _ = 1, n do
         local args = case.args
@@ -60,7 +58,7 @@ get_bench_stat = function(case, index)
         name = case.name,
         args = case.args,
         opts = case.opts,
-        time = dt / case.n,
+        time = dt / n,
     }
 end
 
@@ -141,7 +139,7 @@ get_bench_report = function(stats, stats_prev, options)
             1000 * time_curr)
     end
 
-    return concat(arr, '\n')
+    return concat(arr, '\n-----\n')
 end
 
 get_test_report = function(stats, options)
@@ -159,7 +157,7 @@ get_test_report = function(stats, options)
             as_str(v.ret, v.opts or options))
     end
 
-    return concat(arr, '\n')
+    return concat(arr, '\n----\n')
 end
 
 get_failed_bench_stats = function(stats, stats_prev, eps)
