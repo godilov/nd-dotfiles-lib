@@ -148,7 +148,7 @@ range_v = function(len, start, step)
     nd_assert(is_num(start), nd_err, 'range_v(): start must be of type number')
     nd_assert(is_num(step), nd_err, 'range_v(): step must be of type number')
     nd_assert(step ~= 0, nd_err, 'range_v(): step must be non-zero')
-    nd_assert(len >= 0, nd_err, 'range_v(): len must be more than zero or equal')
+    nd_assert(len >= 0, nd_err, 'range_v(): len must be non-negative')
 
     local sign = step > 0 and 1 or -1
     local stop = start + step * len
@@ -164,7 +164,7 @@ range_iv = function(len, start, step)
     nd_assert(is_num(start), nd_err, 'range_iv(): start must be of type number')
     nd_assert(is_num(step), nd_err, 'range_iv(): step must be of type number')
     nd_assert(step ~= 0, nd_err, 'range_iv(): step must be non-zero')
-    nd_assert(len >= 0, nd_err, 'range_iv(): len must be more than zero or equal')
+    nd_assert(len >= 0, nd_err, 'range_iv(): len must be non-negative')
 
     return get_iter(range_iv_next, { len, step }, { 0, start - step })
 end
@@ -245,9 +245,11 @@ get_filter_iter = function(fn, iter)
     nd_assert(is_iter(iter), nd_err, 'get_filter_iter(): iter must be of type iter')
 
     local next = iter[1]
+    local data = iter[2]
+    local elem = iter[3]
 
-    return get_iter(function(data, state)
-        local elem = next(data, state)
+    return get_iter(function(_, _)
+        elem = next(data, elem)
 
         while elem and not fn(elem) do
             elem = next(data, elem)
@@ -322,38 +324,44 @@ get_zip_iter = function(iter_, iter)
 end
 
 get_take_iter = function(n, iter)
-    nd_assert(n > 0, nd_err, 'get_take_iter(): n must not be more than zero')
+    nd_assert(n >= 0, nd_err, 'get_take_iter(): n must not be non-negative')
     nd_assert(is_iter(iter), nd_err, 'get_take_iter(): iter must be of type iter')
 
     local next  = iter[1]
+    local data  = iter[2]
+    local elem  = iter[3]
     local index = 0
 
-    return get_iter(function(data, state)
+    return get_iter(function(_, _)
         if index < n then
+            elem  = next(data, elem)
             index = index + 1
 
-            return next(data, state)
+            return elem
         end
     end, iter[2], iter[3])
 end
 
 get_skip_iter = function(n, iter)
-    nd_assert(n > 0, nd_err, 'get_skip_iter(): n must not be more than zero')
+    nd_assert(n >= 0, nd_err, 'get_skip_iter(): n must not be non-negative')
     nd_assert(is_iter(iter), nd_err, 'get_skip_iter(): iter must be of type iter')
 
-    local next  = iter[1]
-    local index = n
+    local next = iter[1]
+    local data = iter[2]
+    local elem = iter[3]
 
-    return get_iter(function(data, state)
-        local elem = state
+    return get_iter(function(_, _)
+        if n > 0 then
+            for _ in range_v(n)() do
+                elem = next(data, elem)
+            end
 
-        for _ in range_v(index)() do
-            elem = next(data, elem)
+            n = 0
         end
 
-        index = 0
+        elem = next(data, elem)
 
-        return next(data, elem)
+        return elem
     end, iter[2], iter[3])
 end
 
@@ -400,27 +408,20 @@ get_add_iter = function(val, index, iter)
     nd_assert(is_iter(iter), nd_err, 'get_add_iter(): iter must be of type iter')
 
     local next = iter[1]
-    local elem = nil
+    local data = iter[2]
+    local elem = iter[3]
     local ind  = 0
 
-    return get_iter(function(data, state)
+    return get_iter(function(_, _)
         ind = ind + 1
 
         if ind == index then
-            elem = next(data, state)
-
             return val
         end
 
-        if elem then
-            local ret = elem
+        elem = next(data, elem)
 
-            elem = nil
-
-            return ret
-        end
-
-        return next(data, state)
+        return elem
     end, iter[2], iter[3])
 end
 
@@ -429,16 +430,20 @@ get_remove_iter = function(index, iter)
     nd_assert(is_iter(iter), nd_err, 'get_remove_iter(): iter must be of type iter')
 
     local next = iter[1]
+    local data = iter[2]
+    local elem = iter[3]
     local ind  = 0
 
-    return get_iter(function(data, state)
+    return get_iter(function(_, _)
         ind = ind + 1
 
         if ind == index then
-            state = next(data, state)
+            elem = next(data, elem)
         end
 
-        return next(data, state)
+        elem = next(data, elem)
+
+        return elem
     end, iter[2], iter[3])
 end
 
