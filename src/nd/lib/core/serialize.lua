@@ -1,5 +1,8 @@
+local str_lib    = require 'nd.lib.core.str'
 local type_lib   = require 'nd.lib.core.type'
 local assert_lib = require 'nd.lib.core.assert'
+
+local concat2s   = str_lib.concat2s
 
 local is_bool    = type_lib.is_bool
 local is_num     = type_lib.is_num
@@ -40,7 +43,7 @@ as_str = function(val, options)
     local sep         = opts_.sep or '\n'
     local step        = opts_.step or '    '
     local offset      = opts_.offset or ''
-    local offset_next = format('%s%s', offset, step)
+    local offset_next = concat2s(offset, step)
 
     local opts        = {
         sep    = sep,
@@ -56,7 +59,7 @@ as_str = function(val, options)
 
         index = index + 1
 
-        arr[index] = format('%s%s,', offset_next, str or 'nil')
+        arr[index] = concat2s(offset_next, str or 'nil')
     end
 
     for k, v in pairs(val) do
