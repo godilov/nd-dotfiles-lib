@@ -67,7 +67,7 @@ create = function(path)
 end
 
 enum = function(path, filter)
-    nd_assert(is_nil(path) or is_str(path), nd_err, 'enum(): path must be of type nil or string')
+    nd_assert(is_str(path) or not path, nd_err, 'enum(): path must be of type string or nil')
 
     local grep = filter and format('| grep %s', filter)
 

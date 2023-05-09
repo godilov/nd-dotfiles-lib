@@ -13,8 +13,11 @@ local is_tab   = type_lib.is_tab
 
 
 local self       = nil
+local set_iv     = nil
 local set_kv     = nil
 
+local concat_arg = nil
+local concat     = nil
 local merge_arg  = nil
 local merge      = nil
 local merge_deep = nil
@@ -24,6 +27,17 @@ local clone_deep = nil
 
 self = function(x)
     return x
+end
+
+set_iv = function(i_fn, v_fn)
+    local i = i_fn or self
+    local v = v_fn or self
+
+    return function(t, elem)
+        t[i(#t + 1)] = v(elem)
+
+        return t
+    end
 end
 
 set_kv = function(k_fn, v_fn)
@@ -37,8 +51,16 @@ set_kv = function(k_fn, v_fn)
     end
 end
 
+concat_arg = function(t, arg)
+    return reduce(set_iv(), t, ivals(arg))
+end
+
 merge_arg = function(t, arg)
     return reduce(set_kv(), t, kv(arg))
+end
+
+concat = function(args)
+    return reduce(concat_arg, {}, ivals(args))
 end
 
 merge = function(args)
@@ -78,6 +100,7 @@ clone_deep = function(val)
 end
 
 return {
+    concat     = concat,
     merge      = merge,
     merge_deep = merge_deep,
     clone      = clone,

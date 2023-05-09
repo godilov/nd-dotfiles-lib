@@ -1,5 +1,6 @@
 local tab_lib    = require 'nd.lib.core.tab'
 
+local concat     = tab_lib.concat
 local merge      = tab_lib.merge
 local merge_deep = tab_lib.merge_deep
 local clone      = tab_lib.clone
@@ -47,6 +48,12 @@ get_test_cases = function()
             args = { a = { a = 1, b = 2, c = 3, d = 4 } },
             res = { a = { a = 1, b = 2, c = 3, d = 4 } },
             fn = clone_deep,
+        },
+        {
+            name = 'tab.concat()',
+            args = { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } },
+            res = { 1, 2, 3, 4, 5, 6, 7, 8, 9 },
+            fn = concat,
         },
     }
 end

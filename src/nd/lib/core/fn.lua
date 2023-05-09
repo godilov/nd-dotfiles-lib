@@ -170,7 +170,7 @@ range_iv = function(len, start, step)
 end
 
 it = function(fn)
-    nd_assert(is_fn(fn), nd_err, 'it(): t must be of type function')
+    nd_assert(is_fn(fn), nd_err, 'it(): fn must be of type function')
 
     return get_iter(fn)
 end
