@@ -1,33 +1,30 @@
-local color_lib    = require 'nd.lib.core.color'
+local color_lib = require 'nd.lib.core.color'
 
-local rgb          = color_lib.rgb
-local hsl          = color_lib.hsl
-local hsb          = color_lib.hsb
+local rgb       = color_lib.rgb
+local hsl       = color_lib.hsl
+local hsb       = color_lib.hsb
 
-local is_rgb       = color_lib.is_rgb
-local is_hsl       = color_lib.is_hsl
-local is_hsb       = color_lib.is_hsb
+local is_rgb    = color_lib.is_rgb
+local is_hsl    = color_lib.is_hsl
+local is_hsb    = color_lib.is_hsb
 
-local rgb_from     = rgb.from
-local rgb_from_hex = rgb.from_hex
-local rgb_add      = rgb.add
-local rgb_sub      = rgb.sub
-local rgb_mul      = rgb.mul
-local rgb_div      = rgb.div
+local rgb_from  = rgb.from
+local rgb_add   = rgb.add
+local rgb_sub   = rgb.sub
+local rgb_mul   = rgb.mul
+local rgb_div   = rgb.div
 
-local hsl_from     = hsl.from
-local hsl_from_hex = hsl.from_hex
-local hsl_add      = hsl.add
-local hsl_sub      = hsl.sub
-local hsl_mul      = hsl.mul
-local hsl_div      = hsl.div
+local hsl_from  = hsl.from
+local hsl_add   = hsl.add
+local hsl_sub   = hsl.sub
+local hsl_mul   = hsl.mul
+local hsl_div   = hsl.div
 
-local hsb_from     = hsb.from
-local hsb_from_hex = hsb.from_hex
-local hsb_add      = hsb.add
-local hsb_sub      = hsb.sub
-local hsb_mul      = hsb.mul
-local hsb_div      = hsb.div
+local hsb_from  = hsb.from
+local hsb_add   = hsb.add
+local hsb_sub   = hsb.sub
+local hsb_mul   = hsb.mul
+local hsb_div   = hsb.div
 
 
 local is_rgb_fn = function(args) return is_rgb(rgb_from(args[1])) end
