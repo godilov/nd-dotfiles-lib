@@ -10,7 +10,7 @@ local init = nil
 local run  = nil
 
 
-init = function(root, is_debug)
+init = function(root, is_debug, _)
     if is_init then
         return
     end
