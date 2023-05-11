@@ -16,6 +16,8 @@ local format          = string.format
 
 local concat          = table.concat
 
+local date            = os.date
+
 local ipairs          = ipairs
 
 
@@ -96,7 +98,7 @@ return function(arr, config, options)
     nd_assert(#ts_failed == 0, nd_err, format('run(): failed test:\n%s', concat(ts_failed, '\n')))
 
     if save then
-        local time = os.date(fmt)
+        local time = date(fmt)
 
         write_val(format('%s/bench-%s.%s', dir, time, ext), bs)
         write_val(format('%s/test-%s.%s', dir, time, ext), ts)
