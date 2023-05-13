@@ -18,6 +18,8 @@ local range_iv_next   = nil
 local iv_next         = nil
 local kv_next         = nil
 local keys_next       = nil
+local get_mapi_fn     = nil
+local get_mapk_fn     = nil
 local get_map_iter    = nil
 local get_filter_iter = nil
 local get_reduce      = nil
@@ -43,6 +45,8 @@ local kv       = nil
 local keys     = nil
 local ivals    = nil
 local kvals    = nil
+local mapi     = nil
+local mapk     = nil
 local map      = nil
 local filter   = nil
 local reduce   = nil
@@ -223,6 +227,20 @@ kvals = function(t)
             return v
         end
     end, t, nil)
+end
+
+get_mapi_fn = function(i)
+    nd_assert(is_num(i), nd_err, 'get_mapi_fn(): i must be of type number')
+
+    return function(elem)
+        return elem[i]
+    end
+end
+
+get_mapk_fn = function(k)
+    return function(elem)
+        return elem[k]
+    end
 end
 
 get_map_iter = function(fn, iter)
@@ -471,6 +489,16 @@ get_each = function(fn, iter)
     end
 end
 
+mapi = function(i, iter)
+    nd_assert(is_num(i), nd_err, 'mapi(): i must be of type number')
+
+    return map(get_mapi_fn(i), iter)
+end
+
+mapk = function(k, iter)
+    return map(get_mapk_fn(k), iter)
+end
+
 map = function(fn, iter)
     nd_assert(is_fn(fn), nd_err, 'map(): fn must be of type function')
 
@@ -598,6 +626,8 @@ return {
     keys     = keys,
     ivals    = ivals,
     kvals    = kvals,
+    mapi     = mapi,
+    mapk     = mapk,
     map      = map,
     filter   = filter,
     reduce   = reduce,

@@ -33,16 +33,18 @@ set_dir = function(path)
     end
 end
 
-get_path = function(name)
-    return concat2s(dir, name)
+get_path = function(key)
+    nd_assert(is_str(key), nd_err, 'get_path(): key must be of type string')
+
+    return concat2s(dir, key)
 end
 
-set = function(name, val)
-    write_val(get_path(name), val)
+set = function(key, val)
+    write_val(get_path(key), val)
 end
 
-get = function(name)
-    return read_val(get_path(name))
+get = function(key)
+    return read_val(get_path(key))
 end
 
 return {
