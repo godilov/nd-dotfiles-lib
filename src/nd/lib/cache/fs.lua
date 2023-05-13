@@ -3,6 +3,7 @@ local str_lib    = require 'nd.lib.core.str'
 local type_lib   = require 'nd.lib.core.type'
 local assert_lib = require 'nd.lib.core.assert'
 
+local exists     = fs_lib.exists
 local read_val   = fs_lib.read_val
 local write_val  = fs_lib.write_val
 
@@ -44,7 +45,9 @@ set = function(key, val)
 end
 
 get = function(key)
-    return read_val(get_path(key))
+    local path = get_path(key)
+
+    return exists(path) and read_val(path)
 end
 
 return {
