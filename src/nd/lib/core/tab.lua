@@ -12,17 +12,19 @@ local collect  = fn_lib.collect
 local is_tab   = type_lib.is_tab
 
 
-local self       = nil
-local set_iv     = nil
-local set_kv     = nil
+local self            = nil
+local set_iv          = nil
+local set_kv          = nil
 
-local concat_arg = nil
-local concat     = nil
-local merge_arg  = nil
-local merge      = nil
-local merge_deep = nil
-local clone      = nil
-local clone_deep = nil
+local concat_arg      = nil
+local concat          = nil
+local merge_arg       = nil
+local merge           = nil
+local merge_deep      = nil
+local clone           = nil
+local clone_deep      = nil
+local clone_with      = nil
+local clone_deep_with = nil
 
 
 self = function(x)
@@ -41,11 +43,8 @@ set_iv = function(i_fn, v_fn)
 end
 
 set_kv = function(k_fn, v_fn)
-    local k = k_fn or self
-    local v = v_fn or self
-
     return function(t, elem)
-        t[k(elem[1])] = v(elem[2])
+        t[k_fn(elem[1])] = v_fn(elem[2])
 
         return t
     end
@@ -56,7 +55,7 @@ concat_arg = function(t, arg)
 end
 
 merge_arg = function(t, arg)
-    return reduce(set_kv(), t, kv(arg))
+    return reduce(set_kv(self, self), t, kv(arg))
 end
 
 concat = function(args)
@@ -88,21 +87,35 @@ merge_deep = function(args)
 end
 
 clone = function(val)
-    return is_tab(val)
-        and reduce(set_kv(), {}, kv(val))
-        or val
+    return is_tab(val) and
+        reduce(set_kv(self, self), {}, kv(val)) or
+        val
 end
 
 clone_deep = function(val)
-    return is_tab(val)
-        and reduce(set_kv(clone_deep, clone_deep), {}, kv(val))
-        or val
+    return is_tab(val) and
+        reduce(set_kv(clone_deep, clone_deep), {}, kv(val)) or
+        val
+end
+
+clone_with = function(val, t)
+    return is_tab(val) and
+        reduce(set_kv(self, self), clone(val), kv(t)) or
+        t
+end
+
+clone_deep_with = function(val, t)
+    return is_tab(val) and
+        reduce(set_kv(self, self), clone_deep(val), kv(t)) or
+        t
 end
 
 return {
-    concat     = concat,
-    merge      = merge,
-    merge_deep = merge_deep,
-    clone      = clone,
-    clone_deep = clone_deep,
+    concat          = concat,
+    merge           = merge,
+    merge_deep      = merge_deep,
+    clone           = clone,
+    clone_deep      = clone_deep,
+    clone_with      = clone_with,
+    clone_deep_with = clone_deep_with,
 }
