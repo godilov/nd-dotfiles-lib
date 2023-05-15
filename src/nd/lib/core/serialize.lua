@@ -1,8 +1,14 @@
+local fn_lib     = require 'nd.lib.core.fn'
 local str_lib    = require 'nd.lib.core.str'
 local type_lib   = require 'nd.lib.core.type'
 local assert_lib = require 'nd.lib.core.assert'
 
+local kv         = fn_lib.kv
+local map        = fn_lib.map
+local collect    = fn_lib.collect
+
 local concat2s   = str_lib.concat2s
+local concat3s   = str_lib.concat3s
 
 local is_bool    = type_lib.is_bool
 local is_num     = type_lib.is_num
@@ -20,7 +26,6 @@ local concat     = table.concat
 
 local loadstring = loadstring
 local tostring   = tostring
-local pairs      = pairs
 
 
 local as_str = nil
@@ -51,28 +56,16 @@ as_str = function(val, options)
         offset = offset_next,
     }
 
-    local arr         = {}
-    local index       = 0
 
-    for _, v in ipairs(val) do
+    local arr = collect(map(function(elem)
+        local k = elem[1]
+        local v = elem[2]
+
         local str = as_str(v, opts)
 
-        index = index + 1
-
-        arr[index] = concat2s(offset_next, str or 'nil')
-    end
-
-    for k, v in pairs(val) do
-        if not arr[k] then
-            local str = as_str(v, opts)
-
-            if str then
-                index = index + 1
-
-                arr[index] = format('%s[\'%s\'] = %s,', offset_next, k, str or 'nil')
-            end
-        end
-    end
+        return is_num(k) and k < #val and concat3s(offset_next, str or 'nil', ',') or
+            format('%s[\'%s\'] = %s,', offset_next, k, str or 'nil')
+    end, kv(val)))
 
     return format('{%s%s%s%s}', sep, concat(arr, sep), sep, offset)
 end
