@@ -63,7 +63,7 @@ as_str = function(val, options)
 
         local str = as_str(v, opts)
 
-        return is_num(k) and k < #val and concat3s(offset_next, str or 'nil', ',') or
+        return is_num(k) and k <= #val and concat3s(offset_next, str or 'nil', ',') or
             format('%s[\'%s\'] = %s,', offset_next, k, str or 'nil')
     end, kv(val)))
 
