@@ -76,8 +76,7 @@ merge_deep = function(args)
                     t[k] = merge_deep(collect(
                         filter(function(x) return x ~= '' end,
                             map(function(x) return x[k] or '' end,
-                                ivals(args)))
-                    ))
+                                ivals(args)))))
                 end
 
                 return t
