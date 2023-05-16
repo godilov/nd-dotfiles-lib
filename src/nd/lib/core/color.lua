@@ -60,6 +60,8 @@ local rshift = bit.rshift
 local band   = bit.band
 
 
+local xy_fn        = nil
+
 local add          = nil
 local sub          = nil
 local mul          = nil
@@ -115,74 +117,90 @@ local is_hsb       = nil
 local is_color     = nil
 
 
+xy_fn = function(x, y)
+    if is_color(x) then
+        return x, y
+    else
+        return y, x
+    end
+end
+
 add = function(fn)
     return function(x, y)
-        local is_y_num   = is_num(y)
-        local is_y_tab   = is_tab(y)
-        local is_y_color = is_color(y)
+        local x_, y_     = xy_fn(x, y)
 
-        nd_assert(is_color(x), nd_err, 'add(): x must be of type color')
+        local is_y_num   = is_num(y_)
+        local is_y_tab   = is_tab(y_)
+        local is_y_color = is_color(y_)
+
+        nd_assert(is_color(x_), nd_err, 'add(): x must be of type color')
         nd_assert(is_y_num or is_y_tab or is_y_color, nd_err, 'add(): y must be of type number, table or number')
 
         return fn {
-            x.data[0] + (is_y_num and y or is_y_tab and y[1] or y.data[0]),
-            x.data[1] + (is_y_num and y or is_y_tab and y[2] or y.data[1]),
-            x.data[2] + (is_y_num and y or is_y_tab and y[3] or y.data[2]),
-            x.data[3] + (is_y_num and y or is_y_tab and y[4] or y.data[3]),
+            x_.data[0] + (is_y_num and y_ or is_y_tab and y_[1] or y_.data[0]),
+            x_.data[1] + (is_y_num and y_ or is_y_tab and y_[2] or y_.data[1]),
+            x_.data[2] + (is_y_num and y_ or is_y_tab and y_[3] or y_.data[2]),
+            x_.data[3] + (is_y_num and y_ or is_y_tab and y_[4] or y_.data[3]),
         }
     end
 end
 
 sub = function(fn)
     return function(x, y)
-        local is_y_num   = is_num(y)
-        local is_y_tab   = is_tab(y)
-        local is_y_color = is_color(y)
+        local x_, y_     = xy_fn(x, y)
 
-        nd_assert(is_color(x), nd_err, 'sub(): x must be of type color')
+        local is_y_num   = is_num(y_)
+        local is_y_tab   = is_tab(y_)
+        local is_y_color = is_color(y_)
+
+        nd_assert(is_color(x_), nd_err, 'sub(): x must be of type color')
         nd_assert(is_y_num or is_y_tab or is_y_color, nd_err, 'sub(): y must be of type number, table or number')
 
         return fn {
-            x.data[0] - (is_y_num and y or is_y_tab and y[1] or y.data[0]),
-            x.data[1] - (is_y_num and y or is_y_tab and y[2] or y.data[1]),
-            x.data[2] - (is_y_num and y or is_y_tab and y[3] or y.data[2]),
-            x.data[3] - (is_y_num and y or is_y_tab and y[4] or y.data[3]),
+            x_.data[0] - (is_y_num and y_ or is_y_tab and y_[1] or y_.data[0]),
+            x_.data[1] - (is_y_num and y_ or is_y_tab and y_[2] or y_.data[1]),
+            x_.data[2] - (is_y_num and y_ or is_y_tab and y_[3] or y_.data[2]),
+            x_.data[3] - (is_y_num and y_ or is_y_tab and y_[4] or y_.data[3]),
         }
     end
 end
 
 mul = function(fn)
     return function(x, y)
-        local is_y_num   = is_num(y)
-        local is_y_tab   = is_tab(y)
-        local is_y_color = is_color(y)
+        local x_, y_     = xy_fn(x, y)
 
-        nd_assert(is_color(x), nd_err, 'mul(): x must be of type color')
+        local is_y_num   = is_num(y_)
+        local is_y_tab   = is_tab(y_)
+        local is_y_color = is_color(y_)
+
+        nd_assert(is_color(x_), nd_err, 'mul(): x must be of type color')
         nd_assert(is_y_num or is_y_tab or is_y_color, nd_err, 'mul(): y must be of type number, table or number')
 
         return fn {
-            x.data[0] * (is_y_num and y or is_y_tab and y[1] or y.data[0]),
-            x.data[1] * (is_y_num and y or is_y_tab and y[2] or y.data[1]),
-            x.data[2] * (is_y_num and y or is_y_tab and y[3] or y.data[2]),
-            x.data[3] * (is_y_num and y or is_y_tab and y[4] or y.data[3]),
+            x_.data[0] * (is_y_num and y_ or is_y_tab and y_[1] or y_.data[0]),
+            x_.data[1] * (is_y_num and y_ or is_y_tab and y_[2] or y_.data[1]),
+            x_.data[2] * (is_y_num and y_ or is_y_tab and y_[3] or y_.data[2]),
+            x_.data[3] * (is_y_num and y_ or is_y_tab and y_[4] or y_.data[3]),
         }
     end
 end
 
 div = function(fn)
     return function(x, y)
-        local is_y_num   = is_num(y)
-        local is_y_tab   = is_tab(y)
-        local is_y_color = is_color(y)
+        local x_, y_     = xy_fn(x, y)
 
-        nd_assert(is_color(x), nd_err, 'div(): x must be of type color')
+        local is_y_num   = is_num(y_)
+        local is_y_tab   = is_tab(y_)
+        local is_y_color = is_color(y_)
+
+        nd_assert(is_color(x_), nd_err, 'div(): x must be of type color')
         nd_assert(is_y_num or is_y_tab or is_y_color, nd_err, 'div(): y must be of type number, table or number')
 
         return fn {
-            x.data[0] / (is_y_num and y or is_y_tab and y[1] or y.data[0]),
-            x.data[1] / (is_y_num and y or is_y_tab and y[2] or y.data[1]),
-            x.data[2] / (is_y_num and y or is_y_tab and y[3] or y.data[2]),
-            x.data[3] / (is_y_num and y or is_y_tab and y[4] or y.data[3]),
+            x_.data[0] / (is_y_num and y_ or is_y_tab and y_[1] or y_.data[0]),
+            x_.data[1] / (is_y_num and y_ or is_y_tab and y_[2] or y_.data[1]),
+            x_.data[2] / (is_y_num and y_ or is_y_tab and y_[3] or y_.data[2]),
+            x_.data[3] / (is_y_num and y_ or is_y_tab and y_[4] or y_.data[3]),
         }
     end
 end
@@ -336,7 +354,7 @@ rgb_from_hex = function(hex)
     local g = rshift(band(n, 0x0000FF00), 8)
     local b = rshift(band(n, 0x000000FF), 0)
 
-    return rgb_t { r, g, b, a }
+    return rgb_t { { r, g, b, a } }
 end
 
 hsl_from_hex = function(hex)
