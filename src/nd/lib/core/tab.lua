@@ -15,10 +15,14 @@ local is_tab   = type_lib.is_tab
 local self            = nil
 local set_iv          = nil
 local set_kv          = nil
+local set_iv_self     = nil
+local set_kv_self     = nil
 
+local flat_arg        = nil
 local concat_arg      = nil
-local concat          = nil
 local merge_arg       = nil
+local flat            = nil
+local concat          = nil
 local merge           = nil
 local merge_deep      = nil
 local clone           = nil
@@ -32,11 +36,8 @@ self = function(x)
 end
 
 set_iv = function(i_fn, v_fn)
-    local i = i_fn or self
-    local v = v_fn or self
-
     return function(t, elem)
-        t[i(#t + 1)] = v(elem)
+        t[i_fn(#t + 1)] = v_fn(elem)
 
         return t
     end
@@ -50,12 +51,24 @@ set_kv = function(k_fn, v_fn)
     end
 end
 
+set_iv_self = set_iv(self, self)
+set_kv_self = set_kv(self, self)
+
+flat_arg = function(t, arg)
+    return is_tab(arg) and reduce(set_iv_self, t, ivals(arg)) or
+        set_iv_self(t, arg)
+end
+
 concat_arg = function(t, arg)
-    return reduce(set_iv(), t, ivals(arg))
+    return reduce(set_iv_self, t, ivals(arg))
 end
 
 merge_arg = function(t, arg)
-    return reduce(set_kv(self, self), t, kv(arg))
+    return reduce(set_kv_self, t, kv(arg))
+end
+
+flat = function(args)
+    return reduce(flat_arg, {}, ivals(args))
 end
 
 concat = function(args)
@@ -87,7 +100,7 @@ end
 
 clone = function(val)
     return is_tab(val) and
-        reduce(set_kv(self, self), {}, kv(val)) or
+        reduce(set_kv_self, {}, kv(val)) or
         val
 end
 
@@ -99,17 +112,18 @@ end
 
 clone_with = function(val, t)
     return is_tab(val) and
-        reduce(set_kv(self, self), clone(val), kv(t)) or
+        reduce(set_kv_self, clone(val), kv(t)) or
         t
 end
 
 clone_deep_with = function(val, t)
     return is_tab(val) and
-        reduce(set_kv(self, self), clone_deep(val), kv(t)) or
+        reduce(set_kv_self, clone_deep(val), kv(t)) or
         t
 end
 
 return {
+    flat            = flat,
     concat          = concat,
     merge           = merge,
     merge_deep      = merge_deep,
