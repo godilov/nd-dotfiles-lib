@@ -1,25 +1,47 @@
-local fn_lib  = require 'nd.lib.core.fn'
+local fn_lib   = require 'nd.lib.core.fn'
 
-local it      = fn_lib.it
+local it       = fn_lib.it
 
-local collect = fn_lib.collect
+local collect  = fn_lib.collect
 
-local gmatch  = string.gmatch
-local format  = string.format
-local rep     = string.rep
+local format   = string.format
+local gmatch   = string.gmatch
+local match    = string.match
+local rep      = string.rep
 
-local unpack  = table.unpack
+local unpack   = table.unpack
 
-
+local starts   = nil
+local ends     = nil
+local split_it = nil
 local split    = nil
+local trim     = nil
 local concat   = nil
 local concat2s = nil
 local concat3s = nil
 local concat4s = nil
 
 
+starts = function(str, pattern)
+    return match(str, format('^({})+', pattern))
+end
+
+ends = function(str, pattern)
+    return match(str, format('({})+$', pattern))
+end
+
+split_it = function(str, sep)
+    return it(gmatch(str, format('[^%s]+', sep or '%s')))
+end
+
 split = function(str, sep)
-    return collect(it(gmatch(str, format('[^%s]+', sep or '%s'))))
+    return collect(split_it(str, sep))
+end
+
+trim = function(str, x)
+    local val = x or ' '
+
+    return match(str, format('({})*.*({})*', val, val))
 end
 
 concat = function(args, sep)
@@ -39,7 +61,11 @@ concat4s = function(s1, s2, s3, s4)
 end
 
 return {
+    starts   = starts,
+    ends     = ends,
+    split_it = split_it,
     split    = split,
+    trim     = trim,
     concat   = concat,
     concat2s = concat2s,
     concat3s = concat3s,

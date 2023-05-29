@@ -1,5 +1,6 @@
 local type_lib   = require 'nd.lib.core.type'
 local assert_lib = require 'nd.lib.core.assert'
+local math_lib   = require 'nd.lib.core.math'
 
 local is_bool    = type_lib.is_bool
 local is_num     = type_lib.is_num
@@ -8,6 +9,8 @@ local is_tab     = type_lib.is_tab
 
 local nd_assert  = assert_lib.get_fn(ND_LIB_IS_DEBUG)
 local nd_err     = assert_lib.get_err_fn 'nd.lib.core.color'
+
+local clamp      = math_lib.clamp
 
 local format     = string.format
 local substr     = string.sub
@@ -18,12 +21,6 @@ local min        = math.min
 local max        = math.max
 
 local tonumber   = tonumber
-
-local clamp      = function(val, min_val, max_val)
-    return val < min_val and min_val
-        or val > max_val and max_val
-        or val
-end
 
 
 local bit = require 'bit'
