@@ -24,7 +24,7 @@ local gsub       = string.gsub
 
 local concat     = table.concat
 
-local loadstring = loadstring
+local loadstring = loadstring or load
 local tostring   = tostring
 
 
