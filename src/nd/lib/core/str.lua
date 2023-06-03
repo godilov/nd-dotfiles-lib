@@ -1,7 +1,6 @@
 local fn_lib   = require 'nd.lib.core.fn'
 
 local it       = fn_lib.it
-
 local collect  = fn_lib.collect
 
 local format   = string.format
@@ -22,10 +21,16 @@ local concat3s = nil
 local concat4s = nil
 
 
+--- Checks if string starts with pattern
+--- @param str string
+--- @param pattern string
 starts = function(str, pattern)
     return match(str, format('^({})+', pattern))
 end
 
+--- Checks if string ends with pattern
+--- @param str string
+--- @param pattern string
 ends = function(str, pattern)
     return match(str, format('({})+$', pattern))
 end

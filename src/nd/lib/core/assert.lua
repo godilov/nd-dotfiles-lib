@@ -16,15 +16,25 @@ local get_fn          = nil
 local get_err_fn      = nil
 
 
+--- Returns a message of error
+--- @param err function|string|nil
+--- @param args any
 get_message = function(err, args)
     assert(is_fn(err) or is_str(err) or is_nil(err),
         'nd.lib.core.assert.get_message(): err must be of type nil, string or function')
 
+    --- @cast err function
     return is_fn(err) and err(args)
         or is_str(err) and err
         or is_nil(err) and 'assertion failed!'
 end
 
+--- Calls error() if val is not true
+--- @param val any
+--- @param err function|string|nil
+--- @param args any
+--- @raise
+--- @return any
 assert_fn = function(val, err, args)
     if not val then
         error(get_message(err, args))
@@ -33,15 +43,26 @@ assert_fn = function(val, err, args)
     return val
 end
 
+--- Calls nothing
+--- @param val any
+--- @return any
 assert_fn_empty = function(val)
     return val
 end
 
+--- Returns implementation for assert function
+--- @param is_debug boolean
+--- @return function
 get_fn = function(is_debug)
     return is_debug and assert_fn or assert_fn_empty
 end
 
+--- Returns error-handling function
+--- @param scope string
+--- @return function
 get_err_fn = function(scope)
+    --- @param message string
+    --- @return string
     return function(message)
         assert(is_str(scope), 'nd.lib.core.assert.get_err_fn(): scope must be of type string')
         assert(is_str(message), 'nd.lib.core.assert.get_err_fn(): message must be of type string')
