@@ -32,6 +32,16 @@ local as_str = nil
 local as_val = nil
 
 
+--- @class serialize_options
+--- @field sep string
+--- @field step string
+--- @field offset string
+
+--- Returns serialialize into a string value
+--- Returns as correct Lua code
+--- @param val any
+--- @param options? serialize_options
+--- @return string|nil
 as_str = function(val, options)
     if is_bool(val) or is_num(val) then
         return tostring(val)
@@ -70,6 +80,9 @@ as_str = function(val, options)
     return format('{%s%s%s%s}', sep, concat(arr, sep), sep, offset)
 end
 
+--- Returns deserialized int a value string
+--- @param str string
+--- @return any
 as_val = function(str)
     nd_assert(is_str(str), nd_err, 'as_val(): str must be of type string')
 

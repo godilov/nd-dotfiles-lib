@@ -85,6 +85,8 @@ return function(arr, config, options)
     local bs_last = bs_any and bs_arr[#bs_arr]
     local bs_prev = bs_any and read_val(format('%s/%s', dir, bs_last))
 
+    --- @cast bs_prev arr<benchstat>
+
     print()
     print(get_bench_report(bs, bs_prev, opts))
     print()

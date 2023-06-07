@@ -39,12 +39,22 @@ local as_num = nil
 local as_str = nil
 
 
+--- @class stopwatch: ffi.cdata*
+--- @field start number
+--- @field exec number
+
 sw_t = ffi.metatype('sw_t', {})
 
+--- Checks if val is of type stopwatch
+--- @param val any
+--- @return boolean
 is_sw = function(val)
     return ffi.istype(sw_t, val)
 end
 
+--- Starts a stopwatch
+--- @param sw? stopwatch
+--- @return stopwatch|ffi.cdata*
 start = function(sw)
     return sw_t {
         clock(),
@@ -52,6 +62,9 @@ start = function(sw)
     }
 end
 
+--- Stops a stopwatch
+--- @param sw stopwatch
+--- @return stopwatch|ffi.cdata*
 stop = function(sw)
     nd_assert(is_sw(sw), nd_err, 'stop(): sw must be of type sw')
 
@@ -63,12 +76,18 @@ stop = function(sw)
     }
 end
 
+--- Returns an execution time as number
+--- @param sw stopwatch
+--- @return number
 as_num = function(sw)
     nd_assert(is_sw(sw), nd_err, 'as_num(): sw must of type sw')
 
     return sw.exec
 end
 
+--- Returns an execution time as string
+--- @param sw stopwatch
+--- @return string
 as_str = function(sw, options)
     nd_assert(is_sw(sw), nd_err, 'as_str(): sw must of type sw')
 
