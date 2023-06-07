@@ -35,7 +35,8 @@ run = function()
     init('.', true)
 
     require 'nd.lib.test' {
-        require 'test.fn',
+        require 'test.fn.init',
+        require 'test.fn.compose',
         require 'test.sw',
         require 'test.str',
         require 'test.tab',
