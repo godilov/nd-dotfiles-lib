@@ -16,7 +16,7 @@ Modules [color](../main/src/nd/lib/core/color.lua) and [stopwatch](../main/src/n
 To include the library, simply place its source code somewhere in your working tree and then call `init()` function from [init](../main/src/init.lua) module.  
 The function takes 2 arguments:
 - `root`: path (relative or absolute) to your working directory. Default: `'.'`
-- `is_debug`: flag whether the library in debug mode. Used only for assertion. Default: `false`
+- `is_debug`: flag whether the library in debug mode for error assertion. Used only for assertion. Default: `false`
 
 Since applied modules (such as [fn](../main/src/nd/lib/core/fn.lua), [color](../main/src/nd/lib/core/color.lua), ...) depends on secondary ([type](../main/src/nd/lib/core/type.lua), [assert](../main/src/nd/lib/core/assert.lua), ...), `init()` must add path to the library in `package.path` for ability to call `require()`.  
   
