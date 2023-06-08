@@ -26,7 +26,7 @@ After `init()` you can easily call `require 'nd.lib.core.(module)'` for core mod
 
 The library was created to fulfill basic software requirements:
 - Fast and functional iterators (like Rust std::iter, C++ std::ranges or C# LINQ)
-- Color processing (mainly for [AwesomeWM](https://github.com/GermanOdilov/nd-dotfiles-awesome) and [Nvim](https://github.com/GermanOdilov/nd-dotfiles-nvim) configs)
+- Color processing (mainly for [Awesome WM](https://github.com/GermanOdilov/nd-dotfiles-awesome) and [Nvim](https://github.com/GermanOdilov/nd-dotfiles-nvim) configs)
 - Testing and benchmarking facilities
 - Caching
 - Serialization
