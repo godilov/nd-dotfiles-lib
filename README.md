@@ -18,7 +18,7 @@ The function takes 2 arguments:
 - `root`: path (relative or absolute) to your working directory. Default: `'.'`
 - `is_debug`: flag whether the library in debug mode for error assertion. Used only for assertion. Default: `false`
 
-Since applied modules (such as [fn](../main/src/nd/lib/core/fn.lua), [color](../main/src/nd/lib/core/color.lua), ...) depends on secondary ([type](../main/src/nd/lib/core/type.lua), [assert](../main/src/nd/lib/core/assert.lua), ...), `init()` must add path to the library in `package.path` for ability to call `require()`.  
+Since applied modules (such as [fn](../main/src/nd/lib/core/fn.lua), [color](../main/src/nd/lib/core/color.lua), ...) depends on secondary ([type](../main/src/nd/lib/core/type.lua), [assert](../main/src/nd/lib/core/assert.lua), ...) and can be reused as source code, `init()` must add path to the library in `package.path` for ability to call `require()`.  
   
 After `init()` you can easily call `require 'nd.lib.core.(module)'` for core module or `require 'nd.lib.(module)'` for stateful module.
 
