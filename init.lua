@@ -15,9 +15,7 @@ init = function(root, is_debug, _)
         return
     end
 
-    if not root then
-        root = '.'
-    end
+    root = root or '.'
 
     local entry_root = path ~= '' and format('%s/%s', root, path) or root
 
