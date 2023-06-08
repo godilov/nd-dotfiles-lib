@@ -114,6 +114,24 @@ local is_hsb       = nil
 local is_color     = nil
 
 
+--- @class rgb: ffi.cdata*
+--- @field data arr<number, 4>
+
+--- @class hsl: ffi.cdata*
+--- @field data arr<number, 4>
+
+--- @class hsb: ffi.cdata*
+--- @field data arr<number, 4>
+
+--- @alias color rgb|hsl|hsb
+
+--- Returns pair (x, y) or (y, x)
+--- (x, y) - if x is of type color
+--- (y, x) - otherwise
+--- @param x any
+--- @param y any
+--- @return any
+--- @return any
 xy_fn = function(x, y)
     if is_color(x) then
         return x, y
@@ -122,6 +140,9 @@ xy_fn = function(x, y)
     end
 end
 
+--- Returns closure which adds some value to color
+--- @param fn function Color constructor
+--- @return function
 add = function(fn)
     return function(x, y)
         local x_, y_     = xy_fn(x, y)
@@ -142,6 +163,9 @@ add = function(fn)
     end
 end
 
+--- Returns closure which substracts some value from color
+--- @param fn function Color constructor
+--- @return function
 sub = function(fn)
     return function(x, y)
         local x_, y_     = xy_fn(x, y)
@@ -162,6 +186,9 @@ sub = function(fn)
     end
 end
 
+--- Returns closure which multiplies color by some value
+--- @param fn function Color constructor
+--- @return function
 mul = function(fn)
     return function(x, y)
         local x_, y_     = xy_fn(x, y)
@@ -182,6 +209,9 @@ mul = function(fn)
     end
 end
 
+--- Returns closure which divides color by some value
+--- @param fn function Color constructor
+--- @return function
 div = function(fn)
     return function(x, y)
         local x_, y_     = xy_fn(x, y)
@@ -202,6 +232,9 @@ div = function(fn)
     end
 end
 
+--- Returns Hue of color
+--- @param color color
+--- @return number
 rgb_hue = function(color)
     nd_assert(is_rgb(color), nd_err, 'rgb.hue(): color must be of type rgb')
 
@@ -225,8 +258,15 @@ rgb_hue = function(color)
     elseif b == max_val then
         return ((4 + (r - g) / len) / 60) % 1
     end
+
+    return 0
 end
 
+--- Returns RGB component of HSL color
+--- Used for casting HSL to RGB
+--- @param color color
+--- @param n number
+--- @return number
 hsl_comp = function(color, n)
     nd_assert(is_hsl(color), nd_err, 'hsl.comp(): color must be of type hsl')
 
@@ -239,6 +279,11 @@ hsl_comp = function(color, n)
     return l - s * min(l, 1 - l) * max(min(k - 3, 9 - k, 1), -1)
 end
 
+--- Returns RGB component of HSB color
+--- Used for casting HSB to RGB
+--- @param color color
+--- @param n number
+--- @return number
 hsb_comp = function(color, n)
     nd_assert(is_hsb(color), nd_err, 'hsb.comp(): color must be of type hsb')
 
@@ -251,6 +296,9 @@ hsb_comp = function(color, n)
     return b * (1 - s * max(min(k, 4 - k, 1), 0))
 end
 
+--- Casts RGB to HSL
+--- @param color rgb
+--- @return hsl
 rgb_as_hsl = function(color)
     nd_assert(is_rgb(color), nd_err, 'rgb.as_hsl(): color must be of type rgb')
 
@@ -271,6 +319,9 @@ rgb_as_hsl = function(color)
     return hsl_t { h, s, l, a }
 end
 
+--- Casts RGB to HSB
+--- @param color rgb
+--- @return hsb
 rgb_as_hsb = function(color)
     nd_assert(is_rgb(color), nd_err, 'rgb.as_hsb(): color must be of type rgb')
 
@@ -291,6 +342,9 @@ rgb_as_hsb = function(color)
     return hsb_t { h, s, b, a }
 end
 
+--- Casts HSL to RGB
+--- @param color hsl
+--- @return rgb
 hsl_as_rgb = function(color)
     nd_assert(is_hsl(color), nd_err, 'hsl.as_rgb(): color must be of type hsl')
 
@@ -302,6 +356,9 @@ hsl_as_rgb = function(color)
     }
 end
 
+--- Casts HSB to RGB
+--- @param color hsb
+--- @return rgb
 hsb_as_rgb = function(color)
     nd_assert(is_hsb(color), nd_err, 'hsb.as_rgb(): color must be of type hsb')
 
@@ -313,6 +370,9 @@ hsb_as_rgb = function(color)
     }
 end
 
+--- Casts RGB to HEX
+--- @param color rgb
+--- @return string
 rgb_as_hex = function(color, alpha)
     nd_assert(is_rgb(color), nd_err, 'rgb.as_hex(): color must be of type rgb')
 
@@ -326,18 +386,27 @@ rgb_as_hex = function(color, alpha)
     return format('#%s%.2X%.2X%.2X', a, r, g, b)
 end
 
+--- Casts HSL to HEX
+--- @param color hsl
+--- @return string
 hsl_as_hex = function(color, alpha)
     nd_assert(is_hsl(color), nd_err, 'hsl.as_hex(): color must be of type hsl')
 
     return rgb_as_hex(hsl_as_rgb(color), alpha)
 end
 
+--- Casts HSB to HEX
+--- @param color hsb
+--- @return string
 hsb_as_hex = function(color, alpha)
     nd_assert(is_hsb(color), nd_err, 'hsb.as_hex(): color must be of type hsb')
 
     return rgb_as_hex(hsb_as_rgb(color), alpha)
 end
 
+--- Reads RGB from HEX
+--- @param hex string
+--- @return rgb
 rgb_from_hex = function(hex)
     local len = lenstr(hex)
 
@@ -354,23 +423,34 @@ rgb_from_hex = function(hex)
     return rgb_t { { r, g, b, a } }
 end
 
+--- Reads HSL from HEX
+--- @param hex string
+--- @return hsl
 hsl_from_hex = function(hex)
     nd_assert(is_str(hex), nd_err, 'hsl.from_hex(): hex must be of type string')
 
     return rgb_as_hsl(rgb_from_hex(hex))
 end
 
+--- Reads HSB from HEX
+--- @param hex string
+--- @return hsb
 hsb_from_hex = function(hex)
     nd_assert(is_str(hex), nd_err, 'hsb.from_hex(): hex must be of type string')
 
     return rgb_as_hsb(rgb_from_hex(hex))
 end
 
+--- Reads RGB from value
+--- @param val arr<number, 4>|number
+--- @return rgb
 rgb_from = function(val)
     local is_val_tab = is_tab(val)
     local is_val_num = is_num(val)
 
     nd_assert(is_val_tab or is_val_num, nd_err, 'rgb.from(): val must be of type table or number')
+
+    --- @cast val number
 
     return rgb_t { {
         clamp(is_val_tab and val[1] or val, 0, 255),
@@ -380,11 +460,16 @@ rgb_from = function(val)
     }, }
 end
 
+--- Reads HSL from value
+--- @param val arr<number, 4>|number
+--- @return hsl
 hsl_from = function(val)
     local is_val_tab = is_tab(val)
     local is_val_num = is_num(val)
 
     nd_assert(is_val_tab or is_val_num, nd_err, 'hsl.from(): val must be of type table or number')
+
+    --- @cast val number
 
     return hsl_t { {
         clamp(is_val_tab and val[1] or val, 0.0, 1.0),
@@ -394,11 +479,16 @@ hsl_from = function(val)
     }, }
 end
 
+--- Reads HSB from value
+--- @param val arr<number, 4>|number
+--- @return hsb
 hsb_from = function(val)
     local is_val_tab = is_tab(val)
     local is_val_num = is_num(val)
 
     nd_assert(is_val_tab or is_val_num, nd_err, 'hsb.from(): val must be of type table or number')
+
+    --- @cast val number
 
     return hsb_t { {
         clamp(is_val_tab and val[1] or val, 0.0, 1.0),
@@ -408,19 +498,43 @@ hsb_from = function(val)
     }, }
 end
 
+--- Returns new color with added value
+--- @return rgb
 rgb_add = add(rgb_from)
+--- Returns new color with substracted value
+--- @return rgb
 rgb_sub = sub(rgb_from)
+--- returns new color divided by value
+--- @return rgb
 rgb_mul = mul(rgb_from)
+--- Returns new color multiplied by value
+--- @return rgb
 rgb_div = div(rgb_from)
 
+--- Returns new color with added value
+--- @return hsl
 hsl_add = add(hsl_from)
+--- Returns new color with substracted value
+--- @return hsl
 hsl_sub = sub(hsl_from)
+--- returns new color divided by value
+--- @return hsl
 hsl_mul = mul(hsl_from)
+--- Returns new color multiplied by value
+--- @return hsl
 hsl_div = div(hsl_from)
 
+--- Returns new color with added value
+--- @return hsb
 hsb_add = add(hsb_from)
+--- Returns new color with substracted value
+--- @return hsb
 hsb_sub = sub(hsb_from)
+--- returns new color divided by value
+--- @return hsb
 hsb_mul = mul(hsb_from)
+--- Returns new color multiplied by value
+--- @return hsb
 hsb_div = div(hsb_from)
 
 rgb_mt = {
@@ -448,18 +562,31 @@ rgb_t = ffi.metatype('rgb_t', rgb_mt)
 hsl_t = ffi.metatype('hsl_t', hsl_mt)
 hsb_t = ffi.metatype('hsb_t', hsb_mt)
 
+
+--- Checks if val is of type RGB
+--- @param val any
+--- @return boolean
 is_rgb = function(val)
     return ffi.istype(rgb_t, val)
 end
 
+--- Checks if val is of type HSL
+--- @param val any
+--- @return boolean
 is_hsl = function(val)
     return ffi.istype(hsl_t, val)
 end
 
+--- Checks if val is of type HSB
+--- @param val any
+--- @return boolean
 is_hsb = function(val)
     return ffi.istype(hsb_t, val)
 end
 
+--- Checks if val is of type color
+--- @param val any
+--- @return boolean
 is_color = function(val)
     return is_rgb(val) or is_hsl(val) or is_hsb(val)
 end

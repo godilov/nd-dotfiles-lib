@@ -89,7 +89,7 @@ are_same_mt = function(x, y)
     return getmetatable(x) == getmetatable(y)
 end
 
---- Checks if x and y are equals by value
+--- Checks if x and y are equal by value
 --- @param x any
 --- @param y any
 --- @return boolean
