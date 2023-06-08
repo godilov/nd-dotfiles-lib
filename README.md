@@ -1,15 +1,15 @@
 # nd-dotfiles-lib
 
 Fast and reliable Lua library.  
-Designed to be used as source code without any additional tools and managers.
+Designed to be used as source code without any additional tools or package managers.
 
 ## Requirements
 
-- LuaJIT
 - Linux
+- LuaJIT
 
-Modules [color](../main/src/nd/lib/core/color.lua) and [stopwatch](../main/src/nd/lib/core/sw.lua) depends on LuaJIT-specific features (FFI, to be exact), so only the JIT version is supported.  
-Module [filesystem](../main/src/nd/lib/fs.lua) depends on Linux-specific commands (such as `ls`, `grep`, `mkdir` and `echo`), so currently it should not work on Windows.
+Module [filesystem](../main/src/nd/lib/fs.lua) depends on Linux-specific commands (such as `ls`, `grep`, `mkdir` and `echo`), so it should not work on Windows currently.  
+Modules [color](../main/src/nd/lib/core/color.lua) and [stopwatch](../main/src/nd/lib/core/sw.lua) depends on LuaJIT-specific features (FFI, to be exact), so only the JIT version is supported.
 
 ## Usage
 
@@ -26,10 +26,12 @@ After `init()` you can easily call `require 'nd.lib.core.(module)'` for core mod
 
 The library was created to fulfill basic software requirements:
 - Fast and functional iterators (like Rust std::iter, C++ std::ranges or C# LINQ)
-- Testing and benchmarking facilities
 - Color processing (mainly for [AwesomeWM](https://github.com/GermanOdilov/nd-dotfiles-awesome) and [Nvim](https://github.com/GermanOdilov/nd-dotfiles-nvim) configs)
-- Caching and serialization
-- ...
+- Testing and benchmarking facilities
+- Caching
+- Serialization
+- Strings extra functionality
+- Tables extra functionality
 
 For reliability and convenience purposes, almost whole library is written in Functional paradigm without any state mutation and other dirty (~~OOP~~) things.  
 Only specific stateful-by-definition things like IO, cache, etc. is allowed to be non-functional.
