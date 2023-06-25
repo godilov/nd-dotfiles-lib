@@ -533,6 +533,10 @@ distinct = function(fn, iter)
             elem = fn(next(data, elem))
         until not set[elem]
 
+        if elem then
+            set[elem] = true
+        end
+
         return elem
     end, data, elem)
 end

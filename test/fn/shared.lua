@@ -27,6 +27,8 @@ get_bench_cases = function(scope, fn)
     local zip_fn      = fn.zip
     local take_fn     = fn.take
     local skip_fn     = fn.skip
+    local distinct_fn = fn.distinct
+    local group_fn    = fn.group
     local count_fn    = fn.count
     local all_fn      = fn.all
     local any_fn      = fn.any
@@ -42,102 +44,112 @@ get_bench_cases = function(scope, fn)
             },
             {
                 name = get_name(scope, 'range_v()'),
-                args = { 1000, 0, 3 },
+                args = { 1024, 0, 3 },
                 fn = range_v_fn,
             },
             {
                 name = get_name(scope, 'range_iv()'),
-                args = { 1000, 0, 3 },
+                args = { 1024, 0, 3 },
                 fn = range_iv_fn,
             },
             {
                 name = get_name(scope, 'it()'),
-                args = { 1000, 0, 3, ' ', '[^%s]+' },
+                args = { 1024, 0, 3, ' ', '[^%s]+' },
                 fn = it_fn,
             },
             {
                 name = get_name(scope, 'iv()'),
-                args = { 1000, 0, 3 },
+                args = { 1024, 0, 3 },
                 fn = iv_fn,
             },
             {
                 name = get_name(scope, 'kv()'),
-                args = { 1000, 0, 3 },
+                args = { 1024, 0, 3 },
                 fn = kv_fn,
             },
             {
                 name = get_name(scope, 'keys()'),
-                args = { 1000, 0, 3 },
+                args = { 1024, 0, 3 },
                 fn = keys_fn,
             },
             {
                 name = get_name(scope, 'ivals()'),
-                args = { 1000, 0, 3 },
+                args = { 1024, 0, 3 },
                 fn = ivals_fn,
             },
             {
                 name = get_name(scope, 'kvals()'),
-                args = { 1000, 0, 3 },
+                args = { 1024, 0, 3 },
                 fn = kvals_fn,
             },
             {
                 name = get_name(scope, 'map()'),
-                args = { 1000, 0, 3, function(x) return x * x end },
+                args = { 1024, 0, 3, function(x) return x * x end },
                 fn = map_fn,
             },
             {
                 name = get_name(scope, 'filter()'),
-                args = { 1000, 0, 3, function(x) return x < 1500 end },
+                args = { 1024, 0, 3, function(x) return x < 2048 end },
                 fn = filter_fn,
             },
             {
                 name = get_name(scope, 'reduce()'),
-                args = { 1000, 0, 3, 0, function(val, x) return val + x end },
+                args = { 1024, 0, 3, 0, function(val, x) return val + x end },
                 fn = reduce_fn,
             },
             {
                 name = get_name(scope, 'concat()'),
-                args = { 1000, 0, 3, 1000, 0, 7 },
+                args = { 1024, 0, 3, 1024, 0, 7 },
                 fn = concat_fn,
             },
             {
                 name = get_name(scope, 'zip()'),
-                args = { 1000, 0, 3, 1000, 0, 7 },
+                args = { 1024, 0, 3, 1024, 0, 7 },
                 fn = zip_fn,
             },
             {
                 name = get_name(scope, 'take()'),
-                args = { 1000, 0, 3, 500 },
+                args = { 1024, 0, 3, 512 },
                 fn = take_fn,
             },
             {
                 name = get_name(scope, 'skip()'),
-                args = { 1000, 0, 3, 500 },
+                args = { 1024, 0, 3, 512 },
                 fn = skip_fn,
             },
             {
+                name = get_name(scope, 'distinct()'),
+                args = { 1024, 0, 3, function(x) return x end },
+                fn = distinct_fn,
+            },
+            {
+                name = get_name(scope, 'group()'),
+                args = { 1024, 0, 3, function(x) return x % 2 end },
+                fn = group_fn,
+            },
+            {
                 name = get_name(scope, 'count()'),
-                args = { 1000, 0, 3 },
+                args = { 1024, 0, 3 },
                 fn = count_fn,
             },
             {
                 name = get_name(scope, 'all()'),
-                args = { 1000, 0, 3, function(x) return x >= 0 end },
+                args = { 1024, 0, 3, function(x) return x >= 0 end },
                 fn = all_fn,
             },
             {
                 name = get_name(scope, 'any()'),
-                args = { 1000, 0, 3, function(x) return x < 0 end },
+                args = { 1024, 0, 3, function(x) return x < 0 end },
                 fn = any_fn,
             },
             {
                 name = get_name(scope, 'add()'),
-                args = { 1000, 0, 3, 500, -1 },
+                args = { 1024, 0, 3, 512, -1 },
                 fn = add_fn,
             },
             {
                 name = get_name(scope, 'remove()'),
-                args = { 1000, 0, 3, 500, -1 },
+                args = { 1024, 0, 3, 512, -1 },
                 fn = remove_fn,
             },
         }
@@ -161,6 +173,8 @@ get_test_cases = function(scope, fn)
     local zip_fn      = fn.zip
     local take_fn     = fn.take
     local skip_fn     = fn.skip
+    local distinct_fn = fn.distinct
+    local group_fn    = fn.group
     local count_fn    = fn.count
     local all_fn      = fn.all
     local any_fn      = fn.any
@@ -285,6 +299,21 @@ get_test_cases = function(scope, fn)
                 args = { 4, 1, 3, 2 },
                 res = { 7, 10 },
                 fn = skip_fn,
+            },
+            {
+                name = get_name(scope, 'distinct()'),
+                args = { 4, 1, 3, function(x) return x end },
+                res = { 1, 4, 7, 10 },
+                fn = distinct_fn,
+            },
+            {
+                name = get_name(scope, 'group()'),
+                args = { 4, 1, 3, function(x) return x % 2 end },
+                res = {
+                    [0] = { 4, 10 },
+                    [1] = { 1, 7 },
+                },
+                fn = group_fn,
             },
             {
                 name = get_name(scope, 'count()'),

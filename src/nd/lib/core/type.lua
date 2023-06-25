@@ -105,7 +105,7 @@ are_eq = function(x, y)
 
     if x == y then
         return true
-    elseif not is_tab(x) or #x ~= #y then
+    elseif not is_tab(x) and #x ~= #y then
         return false
     end
 

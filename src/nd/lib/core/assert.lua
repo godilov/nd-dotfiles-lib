@@ -1,12 +1,10 @@
-local type_lib  = require 'nd.lib.core.type'
+local type_lib = require 'nd.lib.core.type'
 
-local is_nil    = type_lib.is_nil
-local is_str    = type_lib.is_str
-local is_fn     = type_lib.is_fn
+local is_nil   = type_lib.is_nil
+local is_str   = type_lib.is_str
+local is_fn    = type_lib.is_fn
 
-local format    = string.format
-
-local traceback = debug.traceback
+local format   = string.format
 
 
 local get_message     = nil
@@ -61,13 +59,11 @@ end
 --- @param scope string
 --- @return function
 get_err_fn = function(scope)
-    --- @param message string
-    --- @return string
     return function(message)
         assert(is_str(scope), 'nd.lib.core.assert.get_err_fn(): scope must be of type string')
         assert(is_str(message), 'nd.lib.core.assert.get_err_fn(): message must be of type string')
 
-        return traceback(format('%s.%s', scope, message))
+        return format('%s.%s', scope, message)
     end
 end
 

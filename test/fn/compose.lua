@@ -18,6 +18,8 @@ local concat   = fn_lib.concat
 local zip      = fn_lib.zip
 local take     = fn_lib.take
 local skip     = fn_lib.skip
+local distinct = fn_lib.distinct
+local group    = fn_lib.group
 local count    = fn_lib.count
 local all      = fn_lib.all
 local any      = fn_lib.any
@@ -56,6 +58,12 @@ local zip_fn      = function(args)
 end
 local take_fn     = function(args) return range_v(args[1], args[2], args[3]) * take(args[4]) * collect() end
 local skip_fn     = function(args) return range_v(args[1], args[2], args[3]) * skip(args[4]) * collect() end
+local distinct_fn = function(args)
+    local range = range_v(args[1], args[2], args[3])
+
+    return range * concat(range) * distinct(args[4]) * collect()
+end
+local group_fn    = function(args) return range_v(args[1], args[2], args[3]) * group(args[4]) end
 local count_fn    = function(args) return range_v(args[1], args[2], args[3]) * count() end
 local all_fn      = function(args) return range_v(args[1], args[2], args[3]) * all(args[4]) end
 local any_fn      = function(args) return range_v(args[1], args[2], args[3]) * any(args[4]) end
@@ -80,6 +88,8 @@ local fn = {
     zip      = zip_fn,
     take     = take_fn,
     skip     = skip_fn,
+    distinct = distinct_fn,
+    group    = group_fn,
     count    = count_fn,
     all      = all_fn,
     any      = any_fn,
