@@ -18,8 +18,11 @@ local are_eq      = nil
 --- @alias index number
 --- @alias value any
 
---- Array of type T and length N
---- @class arr<T, N>: { [integer]: T }
+--- Table of key-type T and value-type V
+--- @class tab<T, V>: { [T]: V }
+
+--- Array of value-type V and length N
+--- @class arr<V, N>: { [integer]: V }
 
 --- Indexed value
 --- @class ind<I, V>: { [1]: I, [2]: V }

@@ -20,6 +20,7 @@ local kv_next       = nil
 local keys_next     = nil
 local mapi_fn       = nil
 local mapk_fn       = nil
+local self          = nil
 
 local empty         = nil
 local range_v       = nil
@@ -40,6 +41,8 @@ local concat        = nil
 local zip           = nil
 local take          = nil
 local skip          = nil
+local distinct      = nil
+local group         = nil
 local count         = nil
 local all           = nil
 local any           = nil
@@ -192,6 +195,13 @@ mapk_fn = function(k)
     return function(elem)
         return elem[k]
     end
+end
+
+--- Returns arg
+--- @param val any
+--- @return any
+self = function(val)
+    return val
 end
 
 --- Empty iterator
@@ -351,7 +361,7 @@ map = function(fn, iter)
         elem = next(data, elem)
 
         return elem and fn(elem)
-    end, iter[2], iter[3])
+    end, data, elem)
 end
 
 --- Filters each element by function
@@ -374,7 +384,7 @@ filter = function(fn, iter)
         end
 
         return elem
-    end, iter[2], iter[3])
+    end, data, elem)
 end
 
 --- Reduce each element by function and initial value
@@ -474,7 +484,7 @@ take = function(n, iter)
 
             return elem
         end
-    end, iter[2], iter[3])
+    end, data, elem)
 end
 
 --- Skips at least N elements of iterator
@@ -501,7 +511,55 @@ skip = function(n, iter)
         elem = next(data, elem)
 
         return elem
-    end, iter[2], iter[3])
+    end, data, elem)
+end
+
+--- Distincts elements of iterator
+--- @param fn function|nil
+--- @param iter iterator
+--- @return iterator
+distinct = function(fn, iter)
+    nd_assert(is_iter(iter), nd_err, 'distinct(): iter must be of type iterator')
+
+    fn = fn or self
+
+    local set = {}
+    local next = iter[1]
+    local data = iter[2]
+    local elem = iter[3]
+
+    return as_iter(function(_, _)
+        repeat
+            elem = fn(next(data, elem))
+        until not set[elem]
+
+        return elem
+    end, data, elem)
+end
+
+--- Groups elements of iterator
+--- @param fn function
+--- @param iter iterator
+--- @return tab<key, arr<value>>
+group = function(fn, iter)
+    nd_assert(is_fn(fn), nd_err, 'group(): fn must be of type function')
+    nd_assert(is_iter(iter), nd_err, 'group(): iter must be of type iterator')
+
+    local res = {}
+
+    for elem in iter() do
+        local k = fn(elem)
+
+        if not res[k] then
+            res[k] = {}
+        end
+
+        local arr = res[k]
+
+        arr[#arr + 1] = elem
+    end
+
+    return res
 end
 
 --- Counts number of elements in iterator
@@ -577,7 +635,7 @@ add = function(val, index, iter)
         elem = next(data, elem)
 
         return elem
-    end, iter[2], iter[3])
+    end, data, elem)
 end
 
 --- Removes val from index of iterator
@@ -603,7 +661,7 @@ remove = function(index, iter)
         elem = next(data, elem)
 
         return elem
-    end, iter[2], iter[3])
+    end, data, elem)
 end
 
 --- Collects result of iterator in array
@@ -670,6 +728,8 @@ return {
     zip      = zip,
     take     = take,
     skip     = skip,
+    distinct = distinct,
+    group    = group,
     count    = count,
     all      = all,
     any      = any,

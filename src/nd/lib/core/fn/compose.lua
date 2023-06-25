@@ -9,54 +9,58 @@ local nd_assert  = assert_lib.get_fn(ND_LIB_IS_DEBUG)
 local nd_err     = assert_lib.get_err_fn 'nd.lib.core.fn.compose'
 
 
-local is_iter      = fn_lib.is_iter
-local as_iter      = fn_lib.as_iter
+local is_iter       = fn_lib.is_iter
+local as_iter       = fn_lib.as_iter
 
-local empty        = fn_lib.empty
-local range_v      = fn_lib.range_v
-local range_iv     = fn_lib.range_iv
-local it_impl      = fn_lib.it
-local iv_impl      = fn_lib.iv
-local kv_impl      = fn_lib.kv
-local keys_impl    = fn_lib.keys
-local ivals_impl   = fn_lib.ivals
-local kvals_impl   = fn_lib.kvals
-local mapi_impl    = fn_lib.mapi
-local mapk_impl    = fn_lib.mapk
+local empty         = fn_lib.empty
+local range_v       = fn_lib.range_v
+local range_iv      = fn_lib.range_iv
+local it_impl       = fn_lib.it
+local iv_impl       = fn_lib.iv
+local kv_impl       = fn_lib.kv
+local keys_impl     = fn_lib.keys
+local ivals_impl    = fn_lib.ivals
+local kvals_impl    = fn_lib.kvals
+local mapi_impl     = fn_lib.mapi
+local mapk_impl     = fn_lib.mapk
 
-local map_impl     = fn_lib.map
-local filter_impl  = fn_lib.filter
-local reduce_impl  = fn_lib.reduce
-local concat_impl  = fn_lib.concat
-local zip_impl     = fn_lib.zip
-local take_impl    = fn_lib.take
-local skip_impl    = fn_lib.skip
-local count_impl   = fn_lib.count
-local all_impl     = fn_lib.all
-local any_impl     = fn_lib.any
-local add_impl     = fn_lib.add
-local remove_impl  = fn_lib.remove
-local collect_impl = fn_lib.collect
-local each_impl    = fn_lib.each
-local pipe         = fn_lib.pipe
+local map_impl      = fn_lib.map
+local filter_impl   = fn_lib.filter
+local reduce_impl   = fn_lib.reduce
+local concat_impl   = fn_lib.concat
+local zip_impl      = fn_lib.zip
+local take_impl     = fn_lib.take
+local skip_impl     = fn_lib.skip
+local distinct_impl = fn_lib.distinct
+local group_impl    = fn_lib.group
+local count_impl    = fn_lib.count
+local all_impl      = fn_lib.all
+local any_impl      = fn_lib.any
+local add_impl      = fn_lib.add
+local remove_impl   = fn_lib.remove
+local collect_impl  = fn_lib.collect
+local each_impl     = fn_lib.each
+local pipe          = fn_lib.pipe
 
-local mapi         = nil
-local mapk         = nil
+local mapi          = nil
+local mapk          = nil
 
-local map          = nil
-local filter       = nil
-local reduce       = nil
-local concat       = nil
-local zip          = nil
-local take         = nil
-local skip         = nil
-local count        = nil
-local all          = nil
-local any          = nil
-local add          = nil
-local remove       = nil
-local collect      = nil
-local each         = nil
+local map           = nil
+local filter        = nil
+local reduce        = nil
+local concat        = nil
+local zip           = nil
+local take          = nil
+local skip          = nil
+local distinct      = nil
+local group         = nil
+local count         = nil
+local all           = nil
+local any           = nil
+local add           = nil
+local remove        = nil
+local collect       = nil
+local each          = nil
 
 
 --- Maps each element by index
@@ -168,6 +172,28 @@ skip = function(n, iter)
     end
 end
 
+--- Distincts elements of iterator
+--- @param fn function|nil
+--- @param iter? iterator
+--- @return iterator|function
+distinct = function(fn, iter)
+    return iter and distinct_impl(fn, iter) or function(iter_ext)
+        return distinct_impl(fn, iter_ext)
+    end
+end
+
+--- Groups elements of iterator
+--- @param fn function
+--- @param iter? iterator
+--- @return tab<key, arr<value>>|function
+group = function(fn, iter)
+    nd_assert(is_fn(fn), nd_err, 'group(): fn must be of type function')
+
+    return iter and group_impl(fn, iter) or function(iter_ext)
+        return group_impl(fn, iter_ext)
+    end
+end
+
 --- Counts number of elements in iterator
 --- @param iter? iterator
 --- @return number|function
@@ -268,6 +294,8 @@ return {
     zip      = zip,
     take     = take,
     skip     = skip,
+    distinct = distinct,
+    group    = group,
     count    = count,
     all      = all,
     any      = any,
