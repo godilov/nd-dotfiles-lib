@@ -34,7 +34,13 @@ subscribe = function(scope, name, fn)
     nd_assert(is_str(name), nd_err, 'subscribe(): name must be of type string')
     nd_assert(is_fn(fn), nd_err, 'subscribe(): fn must be of type function')
 
-    local event = events[key(scope, name)]
+    local k = key(scope, name)
+
+    local event = events[k]
+
+    if not event then
+        events[k] = {}
+    end
 
     event[#event + 1] = fn
 end
@@ -55,7 +61,11 @@ notify = function(scope, name, args)
     nd_assert(is_str(scope), nd_err, 'notify(): scope must be of type string')
     nd_assert(is_str(name), nd_err, 'notify(): name must be of type string')
 
-    each(notify_each(args), ivals(events[key(scope, name)]))
+    local event = events[key(scope, name)]
+
+    if event then
+        each(notify_each(args), ivals(event))
+    end
 end
 
 return {
